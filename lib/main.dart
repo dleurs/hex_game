@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/navigation/hex_location.dart';
+import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -11,6 +12,10 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
+    notFoundPage: BeamPage(
+      key: UniqueKey(),
+      child: PageNotFoundScreen(),
+    ),
     beamLocations: [
       HexLocation(),
     ],
