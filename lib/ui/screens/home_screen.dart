@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/navigation/hex_location.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
-import 'package:hex_game/ui/screens/profile_screen.dart';
+import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(Intl.getCurrentLocale()),
               ElevatedButton(
                   onPressed: () {
-                    Beamer.of(context).beamToNamed(ProfileScreen.uri.path);
+                    Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
                   },
                   child: Text("-> # <-"))
             ],

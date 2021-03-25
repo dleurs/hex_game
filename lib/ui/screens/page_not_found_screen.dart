@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
+import 'package:hex_game/ui/components/main_scaffold.dart';
 import 'package:intl/intl.dart';
 
 class PageNotFoundScreen extends StatelessWidget {
@@ -12,10 +13,7 @@ class PageNotFoundScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).hex_game_title),
-      ),
+    return MainScaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Column(
