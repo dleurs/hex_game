@@ -1,5 +1,9 @@
 {
   "@@locale": "en",
   "hex_game_title": "Hex game",
-  "@hex_game_title": {}
+  "@hex_game_title": {},
+  "page_not_found_title": "Page not found ",
+  "@page_not_found_title": {},
+  "profile_title": "Profil",
+  "@profile_title": {}
 }

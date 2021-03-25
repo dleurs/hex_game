@@ -1,5 +1,9 @@
 {
   "@@locale": "fr",
   "hex_game_title": "Le jeu de Hex",
-  "@hex_game_title": {}
+  "@hex_game_title": {},
+  "page_not_found_title": "Page introuvable",
+  "@page_not_found_title": {},
+  "profile_title": "Profile",
+  "@profile_title": {}
 }

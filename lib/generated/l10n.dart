@@ -56,6 +56,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Page not found `
+  String get page_not_found_title {
+    return Intl.message(
+      'Page not found ',
+      name: 'page_not_found_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profil`
+  String get profile_title {
+    return Intl.message(
+      'Profil',
+      name: 'profile_title',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

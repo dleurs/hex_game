@@ -1,6 +1,8 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/generated/l10n.dart';
+import 'package:hex_game/navigation/hex_location.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -8,10 +10,18 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerRouterDelegate(
+    beamLocations: [
+      HexLocation(),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: "Hex Game",
+      routerDelegate: routerDelegate,
+      routeInformationParser: BeamerRouteInformationParser(),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -21,38 +31,6 @@ class MyApp extends StatelessWidget {
       supportedLocales: S.delegate.supportedLocales,
       theme: ThemeData(
         primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).hex_game_title),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text(
-                S.of(context).hex_game_title,
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Text(Intl.getCurrentLocale()),
-            ],
-          ),
-        ),
       ),
     );
   }

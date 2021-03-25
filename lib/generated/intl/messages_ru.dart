@@ -21,6 +21,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
-    "hex_game_title" : MessageLookupByLibrary.simpleMessage("Игра Hex")
+    "hex_game_title" : MessageLookupByLibrary.simpleMessage("Игра Hex"),
+    "page_not_found_title" : MessageLookupByLibrary.simpleMessage("Страница не найдена"),
+    "profile_title" : MessageLookupByLibrary.simpleMessage("Профиль")
   };
 }
