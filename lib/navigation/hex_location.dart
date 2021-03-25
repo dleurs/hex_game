@@ -7,31 +7,14 @@ import 'package:hex_game/ui/screens/profile_screen.dart';
 
 class HexLocation extends BeamLocation {
   @override
-  List<String> get pathBlueprints => [RouteNames.profile.fullPath];
+  List<String> get pathBlueprints => [ProfileScreen.uri.path];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) {
     return [
-      BeamPage(
-        key: ValueKey(RouteNames.home.segment),
-        child: HomeScreen(),
-      ),
-      if (state.uri.pathSegments.contains(RouteNames.profile.segment))
-        BeamPage(
-          key: ValueKey(RouteNames.profile.segment),
-          child: ProfileScreen(),
-        )
+      HomeScreen.beamLocation,
+      if (state.uri.pathSegments.contains(ProfileScreen.uri.pathSegments[0]))
+        ProfileScreen.beamLocation
     ];
   }
-}
-
-class RouteNames {
-  static final home = RouteName(segment: "home", fullPath: "/");
-  static final profile = RouteName(segment: "profile", fullPath: "/profile");
-}
-
-class RouteName {
-  final String segment;
-  final String fullPath;
-  RouteName({required this.segment, required this.fullPath});
 }

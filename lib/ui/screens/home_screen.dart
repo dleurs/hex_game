@@ -2,9 +2,17 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/navigation/hex_location.dart';
+import 'package:hex_game/ui/components/main_scaffold.dart';
+import 'package:hex_game/ui/screens/profile_screen.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
+  static final BeamPage beamLocation = BeamPage(
+    key: ValueKey(HomeScreen.uri.path),
+    child: HomeScreen(),
+  );
+  static final Uri uri = Uri(path: "/");
+
   HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -14,10 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).hex_game_title),
-      ),
+    return MainScaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -29,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(Intl.getCurrentLocale()),
               ElevatedButton(
                   onPressed: () {
-                    Beamer.of(context).beamToNamed(RouteNames.profile.fullPath);
+                    Beamer.of(context).beamToNamed(ProfileScreen.uri.path);
                   },
                   child: Text("-> # <-"))
             ],
