@@ -2,6 +2,8 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
+import 'package:hex_game/ui/screens/page_not_found_screen.dart';
+import 'package:hex_game/utils/form_validator.dart';
 
 class PlayerScreen extends StatelessWidget {
   final String? playerId;
@@ -10,17 +12,26 @@ class PlayerScreen extends StatelessWidget {
 
   static BeamPage beamLocation({String? playerId}) {
     return BeamPage(
-      key: ValueKey(PlayerScreen.uri.path),
+      key: ValueKey(PlayerScreen.uri(playerId: playerId).path),
       child: PlayerScreen(
         playerId: playerId,
       ),
     );
   }
 
-  static final Uri uri = Uri(path: "/player/:playerId");
+  static Uri uri({String? playerId}) {
+    return Uri(path: "/player/" + (playerId ?? ":playerId"));
+  }
 
   @override
   Widget build(BuildContext context) {
+    String? checkedPlayerIdSlug;
+    if (FormValidators.isPlayerIdValid(playerId)) {
+      checkedPlayerIdSlug = playerId;
+    } else {
+      return PageNotFoundScreen();
+    }
+
     return MainScaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -31,9 +42,9 @@ class PlayerScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline3,
               ),
               Text(
-                (playerId != null)
-                    ? ("Player id : " + (playerId ?? ""))
-                    : "Player id not set",
+                (checkedPlayerIdSlug != null)
+                    ? ("Player id slug : " + (checkedPlayerIdSlug ?? ""))
+                    : "Player id slug not set",
                 style: Theme.of(context).textTheme.headline4,
               ),
             ],

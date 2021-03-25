@@ -8,7 +8,7 @@ import 'package:hex_game/ui/screens/players_screen.dart';
 
 class HexLocation extends BeamLocation {
   @override
-  List<String> get pathBlueprints => [PlayerScreen.uri.path];
+  List<String> get pathBlueprints => [PlayerScreen.uri().path];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) {
