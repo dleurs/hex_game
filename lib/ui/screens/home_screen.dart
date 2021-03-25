@@ -1,7 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
-import 'package:hex_game/navigation/hex_location.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:intl/intl.dart';

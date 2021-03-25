@@ -4,9 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/navigation/hex_location.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
-import 'package:intl/intl.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() {
+  setPathUrlStrategy(); // Remove the "#" from the url
   runApp(MyApp());
 }
 

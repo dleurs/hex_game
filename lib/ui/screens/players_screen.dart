@@ -1,9 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
-import 'package:intl/intl.dart';
 
 // DATA
 List<Player> players = [
@@ -39,8 +37,8 @@ class PlayersScreen extends StatelessWidget {
                 //onTap: () => context.beamToNamed('/books/${book['id']}'),
                 onTap: () => context.currentBeamLocation.update(
                   (state) => state.copyWith(
-                    pathBlueprintSegments: ['player', ':playerId'],
-                    pathParameters: {'playerId': player.pseudo!},
+                    pathBlueprintSegments: ['player', ':playerSlug'],
+                    pathParameters: {'playerSlug': player.pseudo!},
                   ),
                 ),
               ),

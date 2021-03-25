@@ -3,31 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
+import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 
 class PlayerScreen extends StatelessWidget {
-  final String? playerId;
+  final String? playerSlug;
 
-  PlayerScreen({this.playerId});
+  PlayerScreen({this.playerSlug});
 
-  static BeamPage beamLocation({String? playerId}) {
+  static BeamPage beamLocation({String? playerSlug}) {
     return BeamPage(
-      key: ValueKey(PlayerScreen.uri(playerId: playerId).path),
+      key: ValueKey(PlayerScreen.uri(playerSlug: playerSlug).path),
       child: PlayerScreen(
-        playerId: playerId,
+        playerSlug: playerSlug,
       ),
     );
   }
 
-  static Uri uri({String? playerId}) {
-    return Uri(path: "/player/" + (playerId ?? ":playerId"));
+  static Uri uri({String? playerSlug}) {
+    return Uri(
+        path: PlayersScreen.uri.path + "/" + (playerSlug ?? ":playerSlug"));
   }
 
   @override
   Widget build(BuildContext context) {
-    String? checkedPlayerIdSlug;
-    if (FormValidators.isPlayerIdValid(playerId)) {
-      checkedPlayerIdSlug = playerId;
+    String? checkedPlayerSlug;
+    if (FormValidators.isPlayerIdValid(playerSlug)) {
+      checkedPlayerSlug = playerSlug;
     } else {
       return PageNotFoundScreen();
     }
@@ -42,9 +44,7 @@ class PlayerScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline3,
               ),
               Text(
-                (checkedPlayerIdSlug != null)
-                    ? ("Player id slug : " + (checkedPlayerIdSlug ?? ""))
-                    : "Player id slug not set",
+                "Player slug : " + checkedPlayerSlug!,
                 style: Theme.of(context).textTheme.headline4,
               ),
             ],
