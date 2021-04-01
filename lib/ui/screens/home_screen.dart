@@ -30,12 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 S.of(context).hex_game_title,
                 style: Theme.of(context).textTheme.headline3,
               ),
-              Text(Intl.getCurrentLocale()),
-              ElevatedButton(
-                  onPressed: () {
-                    Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
-                  },
-                  child: Text("-> # <-"))
+              Text(
+                Intl.getCurrentLocale(),
+              ),
             ],
           ),
         ),
