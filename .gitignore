@@ -1,5 +1,6 @@
 # Firebase
 android/app/google-services.json
+web/index.html
 
 # Miscellaneous
 *.class
