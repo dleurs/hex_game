@@ -1,0 +1,55 @@
+name: Flutter Web
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: 'stable' 
+    - run: flutter config --enable-web
+    - run: flutter packages get
+    #- run: flutter build web --web-renderer html --release
+    - run: flutter build web --release --no-sound-null-safety
+    - run: flutter doctor -v
+    - run: pwd
+    #- run: curl https://transfer.sh/zVDXp/sitemap.xml > sitemap.xml # Generated in https://www.xml-sitemaps.com/ hosted on transfer.sh
+    # Directly put inside web
+    - run: cat sitemap.xml
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: ls
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    
+    # Bug https://github.com/flutter/flutter/issues/69287
+    #- run: cat index.html
+    #  working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    #- run: sed -i '/base href/d' index.html #For MacOS : sed -i '' '/base href/d' index.html
+    #  working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    #- run: cat index.html
+    #  working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+
+    - run: git init
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git config user.name  "CI"
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git config user.email "flutter-ci@github.com"
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git remote add secure-origin https://${{ secrets.ACCESS_TOKEN }}@github.com/${{ github.actor }}/${{ github.event.repository.name }}.git
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git checkout -b gh-pages
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git add .
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git commit -m "Updated docs" --allow-empty
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
+    - run: git push --force secure-origin gh-pages
+      working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
