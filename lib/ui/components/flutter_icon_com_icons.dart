@@ -26,4 +26,5 @@ class FlutterIconCom {
   static const IconData award = IconData(0xe81c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData nut = IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData user = IconData(0xe81e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData group = IconData(0xe81f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
