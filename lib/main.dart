@@ -9,11 +9,13 @@ import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
+import 'core/authentication/anonymous_login_on_first_launch.dart';
+
 Future<void> main() async {
   setPathUrlStrategy(); // Remove the "#" from the url
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); //TODO Check how Firebase Analytics works
-  runApp(MyApp());
+  runApp(InitFirebaseUserOnFirstLaunch(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
