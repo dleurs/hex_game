@@ -7,10 +7,10 @@ import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/navigation/hex_location.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:provider/provider.dart';
-//import 'package:url_strategy/url_strategy.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 Future<void> main() async {
-  //setPathUrlStrategy(); // Remove the "#" from the url
+  setPathUrlStrategy(); // Remove the "#" from the url
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); //TODO Check how Firebase Analytics works
   runApp(MyApp());
