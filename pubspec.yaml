@@ -33,6 +33,7 @@ dependencies:
   firebase_core: ^1.0.2
   intl: ^0.17.0
   intl_utils: ^2.1.0
+  provider: ^5.0.0
   shared_preferences: ^2.0.5
   url_strategy: ^0.2.0
 

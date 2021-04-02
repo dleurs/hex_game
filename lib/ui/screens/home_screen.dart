@@ -1,9 +1,11 @@
 import 'package:beamer/beamer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static final BeamPage beamLocation = BeamPage(
@@ -22,24 +24,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text(
-                S.of(context).hex_game_title,
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Text(
-                Intl.getCurrentLocale(),
-              ),
-              Text(
-                "Hello World",
-              ),
-            ],
+      body: Consumer<User?>(builder: (context, user, child) {
+        return Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  S.of(context).hex_game_title,
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+                Text(
+                  Intl.getCurrentLocale(),
+                ),
+                Text(
+                  user?.isAnonymous.toString() ?? "User not connected",
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
