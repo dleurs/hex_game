@@ -33,6 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 Intl.getCurrentLocale(),
               ),
+              Text(
+                "Hello World",
+              ),
             ],
           ),
         ),
