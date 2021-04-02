@@ -1,17 +1,17 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/generated/l10n.dart';
 
 class LoadingMaterialAppScreen extends StatelessWidget {
-  final String title;
   final String subtitle;
-  LoadingMaterialAppScreen({this.title = "", this.subtitle = ""});
+  LoadingMaterialAppScreen({this.subtitle = "This is a test"});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Linkia',
+      title: 'Hex game',
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
       home: LoadingScaffoldScreen(
@@ -24,13 +24,13 @@ class LoadingMaterialAppScreen extends StatelessWidget {
 class LoadingScaffoldScreen extends StatelessWidget {
   final String subtitle;
   final List<Widget>? actions;
-  LoadingScaffoldScreen({this.subtitle = "", this.actions});
+  LoadingScaffoldScreen({this.subtitle = "This is a test", this.actions});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).hex_game_title),
+        title: Text(""),
         actions: actions ?? [],
         leading: SizedBox(),
       ),
@@ -41,7 +41,7 @@ class LoadingScaffoldScreen extends StatelessWidget {
 
 class LoadingBodyScreen extends StatelessWidget {
   final String subtitle;
-  LoadingBodyScreen({this.subtitle = ""});
+  LoadingBodyScreen({this.subtitle = "This is a test"});
   @override
   Widget build(BuildContext context) {
     return Center(

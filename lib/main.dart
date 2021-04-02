@@ -15,7 +15,7 @@ Future<void> main() async {
   setPathUrlStrategy(); // Remove the "#" from the url
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); //TODO Check how Firebase Analytics works
-  runApp(InitFirebaseUserOnFirstLaunch(child: MyApp()));
+  runApp(AnonymousLoginOnFirstLaunch(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       child: PageNotFoundScreen(),
     ),
     beamLocations: [
-      HexLocation(),
+      AppLocation(),
     ],
   );
 

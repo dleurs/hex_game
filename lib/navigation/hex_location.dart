@@ -1,14 +1,17 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:hex_game/ui/loading/loading_screens.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 
-class HexLocation extends BeamLocation {
+class AppLocation extends BeamLocation {
   @override
-  List<String> get pathBlueprints =>
-      [PlayerScreen.uri().path, LoginRegisterScreen.uri.path];
+  List<String> get pathBlueprints => [
+        PlayerScreen.uri().path,
+        LoginRegisterScreen.uri.path,
+      ];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) {
@@ -23,7 +26,7 @@ class HexLocation extends BeamLocation {
         if (state.pathParameters.containsKey('playerSlug'))
           PlayerScreen.beamLocation(
               playerSlug: state.pathParameters['playerSlug']),
-      ]
+      ],
     ];
   }
 }

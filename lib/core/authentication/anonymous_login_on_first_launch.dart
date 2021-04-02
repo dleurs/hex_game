@@ -3,9 +3,9 @@ import 'package:hex_game/core/authentication/user_firebase.dart';
 import 'package:hex_game/core/local_storage.dart';
 import 'package:hex_game/ui/loading/loading_screens.dart';
 
-class InitFirebaseUserOnFirstLaunch extends StatelessWidget {
+class AnonymousLoginOnFirstLaunch extends StatelessWidget {
   final Widget child;
-  InitFirebaseUserOnFirstLaunch({required this.child});
+  AnonymousLoginOnFirstLaunch({required this.child});
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(

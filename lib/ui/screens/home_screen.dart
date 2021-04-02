@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Intl.getCurrentLocale(),
                 ),
                 Text(
-                  user?.isAnonymous.toString() ?? "User not connected",
+                  user?.uid ?? "User not connected",
                 ),
               ],
             ),
