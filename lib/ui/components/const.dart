@@ -1,7 +1,12 @@
-class Const {
+class AppDimensions {
   static const double xSmallHeight = 14.0;
   static const double smallHeight = 24.0;
   static const double mediumHeight = 34.0;
 
   static const double mediumFontSize = 20.0;
+
+  static const double smallScreenSize = 600.0;
+  static const double mediumScreenSize = 960.0;
+  static const double largeScreenSize = 1280.0;
+  static const double xLargeScreenSize = 1920.0;
 }

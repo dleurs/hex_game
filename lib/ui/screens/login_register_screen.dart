@@ -21,6 +21,8 @@ class LoginRegisterScreen extends StatefulWidget {
   _LoginRegisterScreenState createState() => _LoginRegisterScreenState();
 }
 
+enum LoginRegistersStep { enterEmail, login, register }
+
 class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
@@ -29,14 +31,18 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
 
   bool _showPasswordEyeIcon = false;
   bool _passwordObscur = true;
-  bool _showModifyEmailIcon = false;
-  bool _emailVerified = false;
+  LoginRegistersStep _step = LoginRegistersStep.enterEmail;
   bool _wrongPassword = false;
 
   TextFormField email() {
     return TextFormField(
-      readOnly: _emailVerified,
-      style: TextStyle(color: _emailVerified ? Colors.grey[700] : Colors.black),
+      readOnly: (_step == LoginRegistersStep.login ||
+          _step == LoginRegistersStep.register),
+      style: TextStyle(
+          color: (_step == LoginRegistersStep.login ||
+                  _step == LoginRegistersStep.register)
+              ? Colors.grey[700]
+              : Colors.black),
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       controller: _email,
@@ -47,7 +53,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
           color: Colors.grey,
         ),
         suffixIcon: null,
-        hintText: 'Email',
+        hintText: 'Email', //TODO INTL
         contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -58,7 +64,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   Widget validateEmail(BuildContext context) {
     return ElevatedButton(
       child: Text(
-        'Enter',
+        'Enter', //TODO INTL
         style: TextStyle(
             fontSize: Theme.of(context).textTheme.headline6?.fontSize),
       ),
@@ -105,7 +111,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Const.mediumHeight)),
+            borderRadius: BorderRadius.circular(AppDimensions.mediumHeight)),
       ),
     );
   }
@@ -117,17 +123,28 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
         return Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Const.xSmallHeight),
-            child: SingleChildScrollView(child: Column(
-              children: toList(() sync* {
-                yield SizedBox(height: Const.mediumHeight);
-                yield email();
-                yield SizedBox(height: Const.mediumHeight);
-                yield validateEmail(context);
-                yield SizedBox(height: Const.mediumHeight);
-                yield password(context);
-              }),
-            )),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.xSmallHeight),
+            child: Center(
+              child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+                child: SingleChildScrollView(child: Column(
+                  children: toList(() sync* {
+                    yield SizedBox(height: AppDimensions.mediumHeight);
+                    yield email();
+                    yield SizedBox(height: AppDimensions.mediumHeight);
+                    yield validateEmail(context);
+                    yield CircularProgressIndicator();
+                    if (_step == LoginRegistersStep.login ||
+                        _step == LoginRegistersStep.register) {
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                      yield password(context);
+                    }
+                  }),
+                )),
+              ),
+            ),
           ),
         );
       }),
