@@ -15,7 +15,7 @@ Future<void> main() async {
   setPathUrlStrategy(); // Remove the "#" from the url
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); //TODO Check how Firebase Analytics works
-  runApp(AnonymousLoginOnFirstLaunch(child: MyApp()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
