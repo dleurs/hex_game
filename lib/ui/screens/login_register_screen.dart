@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hex_game/core/authentication/user_firebase.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
@@ -33,6 +34,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   bool _passwordObscur = true;
   LoginRegistersStep _step = LoginRegistersStep.enterEmail;
   bool _wrongPassword = false;
+  bool _loading = false;
 
   TextFormField email() {
     return TextFormField(
@@ -52,7 +54,18 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
           Icons.email,
           color: Colors.grey,
         ),
-        suffixIcon: null,
+        suffixIcon: (_step == LoginRegistersStep.login ||
+                _step == LoginRegistersStep.register)
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    _email.text = "";
+                    _password.text = "";
+                    _step = LoginRegistersStep.enterEmail;
+                  });
+                },
+                icon: Icon(Icons.cached_outlined))
+            : null,
         hintText: 'Email', //TODO INTL
         contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
@@ -61,18 +74,38 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     );
   }
 
-  Widget validateEmail(BuildContext context) {
-    return ElevatedButton(
-      child: Text(
-        'Enter', //TODO INTL
-        style: TextStyle(
-            fontSize: Theme.of(context).textTheme.headline6?.fontSize),
+  Widget buttonValidateEmail(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints.tightFor(width: 120, height: 50),
+      child: ElevatedButton(
+        child: !_loading
+            ? Text(
+                'Enter', //TODO INTL
+                style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.headline6?.fontSize),
+              )
+            : CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+        onPressed: () async {
+          if (_formKey.currentState?.validate() ?? false) {
+            setState(() {
+              _loading = true;
+            });
+            print("Checking if email " + _email.text + " is already used");
+            bool isEmailAlreadyUsed =
+                await UserFirebase.isEmailAlreadyUsed(email: _email.text);
+            print("isEmailAlreadyUsed : " + isEmailAlreadyUsed.toString());
+
+            setState(() {
+              (isEmailAlreadyUsed)
+                  ? _step = LoginRegistersStep.login
+                  : _step = LoginRegistersStep.register;
+              _loading = false;
+            });
+          }
+        },
       ),
-      onPressed: () async {
-        if (_formKey.currentState?.validate() ?? false) {
-          print("OK");
-        }
-      },
     );
   }
 
@@ -116,6 +149,47 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     );
   }
 
+  Widget buttonValidateEmailPassword(
+      {required BuildContext context, required LoginRegistersStep step}) {
+    if (step == LoginRegistersStep.enterEmail) {
+      return SizedBox();
+    }
+    return ConstrainedBox(
+      constraints: BoxConstraints.tightFor(width: 120, height: 50),
+      child: ElevatedButton(
+        child: !_loading
+            ? Text(
+                step == LoginRegistersStep.login
+                    ? 'Login'
+                    : 'Register', //TODO INTL
+                style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.headline6?.fontSize),
+              )
+            : CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+        onPressed: () async {
+          if (_formKey.currentState?.validate() ?? false) {
+            setState(() {
+              _loading = true;
+            });
+            print("Checking if email " + _email.text + " is already used");
+            bool isEmailAlreadyUsed =
+                await UserFirebase.isEmailAlreadyUsed(email: _email.text);
+            print("isEmailAlreadyUsed : " + isEmailAlreadyUsed.toString());
+
+            setState(() {
+              (isEmailAlreadyUsed)
+                  ? _step = LoginRegistersStep.login
+                  : _step = LoginRegistersStep.register;
+              _loading = false;
+            });
+          }
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
@@ -134,12 +208,15 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                     yield SizedBox(height: AppDimensions.mediumHeight);
                     yield email();
                     yield SizedBox(height: AppDimensions.mediumHeight);
-                    yield validateEmail(context);
-                    yield CircularProgressIndicator();
+                    if (_step == LoginRegistersStep.enterEmail) {
+                      yield buttonValidateEmail(context);
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                    }
+                    //yield CircularProgressIndicator();
                     if (_step == LoginRegistersStep.login ||
                         _step == LoginRegistersStep.register) {
-                      yield SizedBox(height: AppDimensions.mediumHeight);
                       yield password(context);
+                      yield SizedBox(height: AppDimensions.mediumHeight);
                     }
                   }),
                 )),

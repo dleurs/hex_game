@@ -14,7 +14,7 @@ class FormValidators {
 
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return null;
+      return 'Please enter a valid email address.';
     }
     RegExp regex = new RegExp(FormValidators.EMAIL_PATTERN);
     if (!regex.hasMatch(value))
@@ -25,7 +25,7 @@ class FormValidators {
 
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return null;
+      return 'Password must be at least 6 characters.';
     }
     RegExp regex = new RegExp(FormValidators.PASSWORD_PATTERN);
     if (!regex.hasMatch(value))

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -28,21 +30,21 @@ class UserFirebase {
     }
   }
 
-  static Future<bool> isEmailAlreadyUsed(
-      {required String email, String password = "wrongPassword"}) async {
+  static Future<bool> isEmailAlreadyUsed({required String email}) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: "barry.allen@example.com",
-              password: "SuperSecretPassword!");
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: "wrongPassword" +
+            Random()
+                .nextInt(1000000)
+                .toString(), //TODO is Random taking some time ?
+      );
       return true;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        return false;
-      } else {
-        // if (e.code == 'wrong-password') {
+    } catch (e) {
+      if (e is FirebaseAuthException && e.code == 'wrong-password') {
         return true;
       }
+      return false;
     }
   }
 }

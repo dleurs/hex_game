@@ -3,6 +3,8 @@ import 'package:hex_game/core/authentication/user_firebase.dart';
 import 'package:hex_game/core/local_storage.dart';
 import 'package:hex_game/ui/loading/loading_screens.dart';
 
+//TODO To delete
+
 class AnonymousLoginOnFirstLaunch extends StatelessWidget {
   final Widget child;
   AnonymousLoginOnFirstLaunch({required this.child});
