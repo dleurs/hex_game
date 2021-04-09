@@ -5,9 +5,9 @@ import 'package:hex_game/ui/components/main_scaffold.dart';
 
 // DATA
 List<Player> players = [
-  Player(uuid: "123", pseudo: "Georges101", email: "georges@gmail.com"),
-  Player(uuid: "456", pseudo: "Martin", email: "martin@gmail.com"),
-  Player(uuid: "789", pseudo: "Sacha", email: "sacha@gmail.com"),
+  Player(uid: "123", pseudo: "Georges101", email: "georges@gmail.com"),
+  Player(uid: "456", pseudo: "Martin", email: "martin@gmail.com"),
+  Player(uid: "789", pseudo: "Sacha", email: "sacha@gmail.com"),
 ];
 
 class PlayersScreen extends StatelessWidget {

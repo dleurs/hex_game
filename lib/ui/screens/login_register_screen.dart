@@ -2,8 +2,11 @@ import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/core/authentication/user_firebase.dart';
+import 'package:hex_game/core/firebase_user_storage.dart';
 import 'package:hex_game/generated/l10n.dart';
+import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/const.dart';
+import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
@@ -28,6 +31,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _email = new TextEditingController();
+  TextEditingController _pseudo = new TextEditingController();
   TextEditingController _password = new TextEditingController();
 
   bool _showPasswordEyeIcon = false;
@@ -43,7 +47,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
       style: TextStyle(
           color: (_step == LoginRegistersStep.login ||
                   _step == LoginRegistersStep.register)
-              ? Colors.grey[700]
+              ? Colors.grey[600]
               : Colors.black),
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -94,7 +98,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
             });
             print("Checking if email " + _email.text + " is already used");
             bool isEmailAlreadyUsed =
-                await UserFirebase.isEmailAlreadyUsed(email: _email.text);
+                await FirebaseUser.isEmailAlreadyUsed(email: _email.text);
             print("isEmailAlreadyUsed : " + isEmailAlreadyUsed.toString());
 
             setState(() {
@@ -106,6 +110,30 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
           }
         },
       ),
+    );
+  }
+
+  TextFormField pseudo() {
+    return TextFormField(
+      readOnly: (_step == LoginRegistersStep.login),
+      style: TextStyle(
+          color: (_step == LoginRegistersStep.login)
+              ? Colors.grey[600]
+              : Colors.black),
+      keyboardType: TextInputType.text,
+      autofocus: false,
+      controller: _pseudo,
+      validator: FormValidators.validatePseudo,
+      decoration: InputDecoration(
+        prefixIcon: Icon(
+          FlutterIconCom.user,
+          color: Colors.grey,
+        ),
+        hintText: 'Pseudo', //TODO INTL
+        contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+      ),
+      onChanged: (String email) {},
     );
   }
 
@@ -149,9 +177,8 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     );
   }
 
-  Widget buttonValidateEmailPassword(
-      {required BuildContext context, required LoginRegistersStep step}) {
-    if (step == LoginRegistersStep.enterEmail) {
+  Widget buttonValidateEmailPseudoPassword({required BuildContext context}) {
+    if (_step == LoginRegistersStep.enterEmail) {
       return SizedBox();
     }
     return ConstrainedBox(
@@ -159,7 +186,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
       child: ElevatedButton(
         child: !_loading
             ? Text(
-                step == LoginRegistersStep.login
+                _step == LoginRegistersStep.login
                     ? 'Login'
                     : 'Register', //TODO INTL
                 style: TextStyle(
@@ -173,15 +200,19 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
             setState(() {
               _loading = true;
             });
-            print("Checking if email " + _email.text + " is already used");
-            bool isEmailAlreadyUsed =
-                await UserFirebase.isEmailAlreadyUsed(email: _email.text);
-            print("isEmailAlreadyUsed : " + isEmailAlreadyUsed.toString());
+            try {
+              Player? newPlayer = await FirestoreUserStorage
+                  .createUserWithPseudoEmailAndPassword(
+                      pseudo: _pseudo.text,
+                      email: _email.text,
+                      password: _password.text,
+                      context: context);
+              print("newPlayer : " + newPlayer.toString());
+            } catch (e) {
+              print("Error : " + e.toString());
+            }
 
             setState(() {
-              (isEmailAlreadyUsed)
-                  ? _step = LoginRegistersStep.login
-                  : _step = LoginRegistersStep.register;
               _loading = false;
             });
           }
@@ -207,9 +238,35 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                   children: toList(() sync* {
                     yield SizedBox(height: AppDimensions.mediumHeight);
                     yield email();
-                    yield SizedBox(height: AppDimensions.mediumHeight);
                     if (_step == LoginRegistersStep.enterEmail) {
+                      yield SizedBox(height: AppDimensions.mediumHeight);
                       yield buttonValidateEmail(context);
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                    } else if (_step == LoginRegistersStep.login) {
+                      yield Padding(
+                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                        child: Text(
+                          "TODO (Email found)", //TODO INTL,
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).textTheme.headline6?.fontSize,
+                            color: AppColors.green,
+                          ),
+                        ),
+                      );
+                    } else if (_step == LoginRegistersStep.register) {
+                      yield Padding(
+                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                        child: Text(
+                          "TODO New email", //TODO INTL,
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).textTheme.headline6?.fontSize,
+                            color: AppColors.grey,
+                          ),
+                        ), //TODO INTL,
+                      );
+                      yield pseudo();
                       yield SizedBox(height: AppDimensions.mediumHeight);
                     }
                     //yield CircularProgressIndicator();
@@ -217,6 +274,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                         _step == LoginRegistersStep.register) {
                       yield password(context);
                       yield SizedBox(height: AppDimensions.mediumHeight);
+                      yield buttonValidateEmailPseudoPassword(context: context);
                     }
                   }),
                 )),

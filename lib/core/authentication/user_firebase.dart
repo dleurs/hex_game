@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hex_game/utils/exceptions.dart';
 
-class UserFirebase {
+class FirebaseUser {
   static Future<String?> signInAnonymously(
       {required BuildContext context}) async {
     try {
@@ -31,20 +32,10 @@ class UserFirebase {
   }
 
   static Future<bool> isEmailAlreadyUsed({required String email}) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: "wrongPassword" +
-            Random()
-                .nextInt(1000000)
-                .toString(), //TODO is Random taking some time ?
-      );
-      return true;
-    } catch (e) {
-      if (e is FirebaseAuthException && e.code == 'wrong-password') {
-        return true;
-      }
-      return false;
-    }
+    return false;
+  }
+
+  static Future<bool> isPseudoAlreadyUsed({required String pseudo}) async {
+    return false;
   }
 }

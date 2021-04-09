@@ -25,7 +25,7 @@ class LocalStorage {
     return prefs.remove(key);
   }
 
-  static Future<bool> userAlreadyOpenApp() async {
+  static Future<bool> doesUserAlreadyOpenApp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool _userAlreadyOpenApp = (prefs.getBool('userAlreadyOpenApp') ?? false);
     if (!_userAlreadyOpenApp) {
