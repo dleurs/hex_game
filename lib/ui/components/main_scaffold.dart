@@ -38,11 +38,7 @@ class MainScaffold extends StatelessWidget {
             IconButton(
               icon: Icon(FlutterIconCom.user),
               onPressed: () {
-                if (user == null || user.isAnonymous) {
-                  Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
-                } else {
-                  Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
-                }
+                Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
               },
             )
           ],
