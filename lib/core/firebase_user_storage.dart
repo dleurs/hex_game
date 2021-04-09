@@ -5,6 +5,13 @@ import 'package:hex_game/models/player.dart';
 import 'package:hex_game/utils/exceptions.dart';
 
 class FirestoreUserStorage {
+  static Future<Player?> getPlayer({required String uid}) async {
+    DocumentSnapshot playerDoc = await FirebaseFirestore.instance
+        .collection(PlayerFireDtbPath.users)
+        .doc(uid)
+        .get();
+  }
+
   static Future<void> updatePlayer(
       {required Player player,
       required SaveFirestoreOperation operation,

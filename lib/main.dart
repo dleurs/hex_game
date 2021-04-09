@@ -1,9 +1,13 @@
 import 'package:beamer/beamer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
+import 'package:hex_game/models/player.dart';
 import 'package:hex_game/navigation/hex_location.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:provider/provider.dart';
@@ -35,23 +39,34 @@ class MyApp extends StatelessWidget {
           create: (BuildContext context) =>
               FirebaseAuth.instance.authStateChanges(),
           initialData: null,
-        )
-      ],
-      child: MaterialApp.router(
-        title: "Hex Game",
-        routerDelegate: routerDelegate,
-        routeInformationParser: BeamerRouteInformationParser(),
-        localizationsDelegates: [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
         ),
-        debugShowCheckedModeBanner: false,
+      ],
+      child: ChangeNotifierProxyProvider<User?, Player>(
+        create: (_) => Player(), // Should be initialised in MainScaffold
+        update: (_, firebaseUser, player) =>
+            player..updateFirebase(firebaseUser),
+        child:
+
+            /* BlocProvider<AuthenticationBloc>(
+        create: (context) => AuthenticationBloc(
+            dbStore: FirebaseFirestore.instance, dbAuth: FirebaseAuth.instance)
+          ..add(AppStartEvent()), */
+            MaterialApp.router(
+          title: "Hex Game",
+          routerDelegate: routerDelegate,
+          routeInformationParser: BeamerRouteInformationParser(),
+          localizationsDelegates: [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          debugShowCheckedModeBanner: false,
+        ),
       ),
     );
   }
