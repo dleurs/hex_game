@@ -15,7 +15,9 @@ class Player {
   static const String isAnonymousArg = "isAnonymous";
   static const String pseudoArg = "pseudo";
   static const String emailArg = "email";
-  static const String dateRegisterEmailArg = "email";
+  static const String dateRegisterEmailArg = "dateRegisterEmail";
+  static const String dateRegisterAnonymousArg = "dateRegisterAnonymous";
+  static const String dateLastUpdateArg = "dateLastUpdate";
   static const String optInNewsletterArg = "optInNewsletter";
 
   @override
@@ -28,16 +30,21 @@ class Player {
       uidArg: uid,
       isAnonymousArg: isAnonymous,
       pseudoArg: pseudo,
-      optInNewsletterArg: optInNewsletter
+      emailArg: email,
+      optInNewsletterArg: optInNewsletter,
+      dateLastUpdateArg: DateTime.now()
     };
     if (operation == SaveFirestoreOperation.emailRegister) {
       mapToFirebase[dateRegisterEmailArg] = DateTime.now();
+    }
+    if (operation == SaveFirestoreOperation.anonymousRegister) {
+      mapToFirebase[dateRegisterAnonymousArg] = DateTime.now();
     }
     return mapToFirebase;
   }
 }
 
-enum SaveFirestoreOperation { emailRegister, anonymousRegister, modification }
+enum SaveFirestoreOperation { emailRegister, anonymousRegister, update }
 
 class PlayerFireDtbPath {
   static const String users = 'users';

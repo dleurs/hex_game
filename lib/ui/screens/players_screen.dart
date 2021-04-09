@@ -15,12 +15,15 @@ class PlayersScreen extends StatelessWidget {
     key: ValueKey(PlayersScreen.uri.path),
     child: PlayersScreen(),
   );
-  static final Uri uri = Uri(path: "/player");
+  static final Uri uri = Uri(path: "/players");
+
+  static final queryParameterPlayer = 'player';
 
   @override
   Widget build(BuildContext context) {
-    final String playerQuery =
-        context.currentBeamLocation.state.queryParameters['player'] ?? '';
+    final String playerQuery = context.currentBeamLocation.state
+            .queryParameters[PlayersScreen.queryParameterPlayer] ??
+        '';
 
     return MainScaffold(
       body: Center(

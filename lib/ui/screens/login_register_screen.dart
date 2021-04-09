@@ -1,13 +1,14 @@
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/core/authentication/user_firebase.dart';
+import 'package:hex_game/core/authentication/firebase_user.dart';
 import 'package:hex_game/core/firebase_user_storage.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/components/main_scaffold.dart';
+import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
 import 'package:hex_game/utils/log.dart';
@@ -19,7 +20,7 @@ class LoginRegisterScreen extends StatefulWidget {
     key: ValueKey(LoginRegisterScreen.uri.path),
     child: LoginRegisterScreen(),
   );
-  static final Uri uri = Uri(path: "/welcome");
+  static final Uri uri = Uri(path: "/player");
 
   @override
   _LoginRegisterScreenState createState() => _LoginRegisterScreenState();
@@ -98,7 +99,8 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
             });
             print("Checking if email " + _email.text + " is already used");
             bool isEmailAlreadyUsed =
-                await FirebaseUser.isEmailAlreadyUsed(email: _email.text);
+                await FirestoreUserStorage.isEmailAlreadyUsed(
+                    email: _email.text);
             print("isEmailAlreadyUsed : " + isEmailAlreadyUsed.toString());
 
             setState(() {
@@ -201,13 +203,19 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
               _loading = true;
             });
             try {
-              Player? newPlayer = await FirestoreUserStorage
-                  .createUserWithPseudoEmailAndPassword(
-                      pseudo: _pseudo.text,
-                      email: _email.text,
-                      password: _password.text,
-                      context: context);
-              print("newPlayer : " + newPlayer.toString());
+              if (_step == LoginRegistersStep.register) {
+                Player? newPlayer = await FirestoreUserStorage
+                    .createUserWithPseudoEmailAndPassword(
+                        pseudo: _pseudo.text,
+                        email: _email.text,
+                        password: _password.text,
+                        context: context);
+                print("newPlayer : " + newPlayer.toString());
+              } else if (_step == LoginRegistersStep.login) {
+                await FirebaseUser.signIn(
+                    email: _email.text, password: _password.text);
+                print("Player logged");
+              }
             } catch (e) {
               print("Error : " + e.toString());
             }
@@ -221,67 +229,78 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     );
   }
 
+  Widget formLoginRegisterPlayer() {
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding:
+            const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ConstrainedBox(
+              constraints:
+                  BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+              child: SingleChildScrollView(child: Column(
+                children: toList(() sync* {
+                  yield SizedBox(height: AppDimensions.mediumHeight);
+                  yield email();
+                  if (_step == LoginRegistersStep.enterEmail) {
+                    yield SizedBox(height: AppDimensions.mediumHeight);
+                    yield buttonValidateEmail(context);
+                    yield SizedBox(height: AppDimensions.mediumHeight);
+                  } else if (_step == LoginRegistersStep.login) {
+                    yield Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                      child: Text(
+                        "TODO (Email found)", //TODO INTL,
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.headline6?.fontSize,
+                          color: AppColors.green,
+                        ),
+                      ),
+                    );
+                  } else if (_step == LoginRegistersStep.register) {
+                    yield Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                      child: Text(
+                        "TODO New email", //TODO INTL,
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.headline6?.fontSize,
+                          color: AppColors.grey,
+                        ),
+                      ), //TODO INTL,
+                    );
+                    yield pseudo();
+                    yield SizedBox(height: AppDimensions.mediumHeight);
+                  }
+                  //yield CircularProgressIndicator();
+                  if (_step == LoginRegistersStep.login ||
+                      _step == LoginRegistersStep.register) {
+                    yield password(context);
+                    yield SizedBox(height: AppDimensions.mediumHeight);
+                    yield buttonValidateEmailPseudoPassword(context: context);
+                  }
+                }),
+              )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
       body: Consumer<User?>(builder: (context, user, child) {
-        return Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.xSmallHeight),
-            child: Center(
-              child: ConstrainedBox(
-                constraints:
-                    BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
-                child: SingleChildScrollView(child: Column(
-                  children: toList(() sync* {
-                    yield SizedBox(height: AppDimensions.mediumHeight);
-                    yield email();
-                    if (_step == LoginRegistersStep.enterEmail) {
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                      yield buttonValidateEmail(context);
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                    } else if (_step == LoginRegistersStep.login) {
-                      yield Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                        child: Text(
-                          "TODO (Email found)", //TODO INTL,
-                          style: TextStyle(
-                            fontSize:
-                                Theme.of(context).textTheme.headline6?.fontSize,
-                            color: AppColors.green,
-                          ),
-                        ),
-                      );
-                    } else if (_step == LoginRegistersStep.register) {
-                      yield Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                        child: Text(
-                          "TODO New email", //TODO INTL,
-                          style: TextStyle(
-                            fontSize:
-                                Theme.of(context).textTheme.headline6?.fontSize,
-                            color: AppColors.grey,
-                          ),
-                        ), //TODO INTL,
-                      );
-                      yield pseudo();
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                    }
-                    //yield CircularProgressIndicator();
-                    if (_step == LoginRegistersStep.login ||
-                        _step == LoginRegistersStep.register) {
-                      yield password(context);
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                      yield buttonValidateEmailPseudoPassword(context: context);
-                    }
-                  }),
-                )),
-              ),
-            ),
-          ),
-        );
+        if (user == null || user.isAnonymous) {
+          return formLoginRegisterPlayer();
+        } else {
+          return Text('Wrong page, you are already connected');
+        }
       }),
     );
   }

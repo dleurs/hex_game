@@ -11,16 +11,16 @@ class FirebaseUser {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInAnonymously();
       return userCredential.user?.uid ?? null;
-    } on FirebaseAuthException catch (e) {}
+    } catch (e) {
+      print("Error: " + e.toString());
+    }
   }
 
   static Future<User?> signIn(
       {required String email, required String password}) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: "barry.allen@example.com",
-              password: "SuperSecretPassword!");
+          .signInWithEmailAndPassword(email: email, password: password);
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -29,13 +29,5 @@ class FirebaseUser {
         print('Wrong password provided for that user.');
       }
     }
-  }
-
-  static Future<bool> isEmailAlreadyUsed({required String email}) async {
-    return false;
-  }
-
-  static Future<bool> isPseudoAlreadyUsed({required String pseudo}) async {
-    return false;
   }
 }

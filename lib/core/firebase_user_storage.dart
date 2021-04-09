@@ -28,6 +28,15 @@ class FirestoreUserStorage {
     return (listDocs.isNotEmpty);
   }
 
+  static Future<bool> isEmailAlreadyUsed({required String email}) async {
+    List<DocumentSnapshot> listDocs = (await FirebaseFirestore.instance
+            .collection(PlayerFireDtbPath.users)
+            .where(Player.emailArg, isEqualTo: email)
+            .get())
+        .docs;
+    return (listDocs.isNotEmpty);
+  }
+
   static Future<Player?> createUserWithPseudoEmailAndPassword(
       {required String pseudo,
       required String email,
@@ -45,7 +54,7 @@ class FirestoreUserStorage {
     if (fireUser == null) {
       return null;
     }
-    Player newPlayer = Player(uid: fireUser.uid, pseudo: pseudo);
+    Player newPlayer = Player(uid: fireUser.uid, pseudo: pseudo, email: email);
     await FirestoreUserStorage.updatePlayer(
         player: newPlayer, operation: SaveFirestoreOperation.emailRegister);
     return newPlayer;
