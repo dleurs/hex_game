@@ -235,56 +235,58 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
       child: Padding(
         padding:
             const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
+          //mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ConstrainedBox(
-              constraints:
-                  BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
-              child: SingleChildScrollView(child: Column(
-                children: toList(() sync* {
-                  yield SizedBox(height: AppDimensions.mediumHeight);
-                  yield email();
-                  if (_step == LoginRegistersStep.enterEmail) {
+            Center(
+              child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+                child: SingleChildScrollView(child: Column(
+                  children: toList(() sync* {
                     yield SizedBox(height: AppDimensions.mediumHeight);
-                    yield buttonValidateEmail(context);
-                    yield SizedBox(height: AppDimensions.mediumHeight);
-                  } else if (_step == LoginRegistersStep.login) {
-                    yield Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                      child: Text(
-                        "TODO (Email found)", //TODO INTL,
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.headline6?.fontSize,
-                          color: AppColors.green,
+                    yield email();
+                    if (_step == LoginRegistersStep.enterEmail) {
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                      yield buttonValidateEmail(context);
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                    } else if (_step == LoginRegistersStep.login) {
+                      yield Padding(
+                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                        child: Text(
+                          "TODO (Email found)", //TODO INTL,
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).textTheme.headline6?.fontSize,
+                            color: AppColors.green,
+                          ),
                         ),
-                      ),
-                    );
-                  } else if (_step == LoginRegistersStep.register) {
-                    yield Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                      child: Text(
-                        "TODO New email", //TODO INTL,
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.headline6?.fontSize,
-                          color: AppColors.grey,
-                        ),
-                      ), //TODO INTL,
-                    );
-                    yield pseudo();
-                    yield SizedBox(height: AppDimensions.mediumHeight);
-                  }
-                  //yield CircularProgressIndicator();
-                  if (_step == LoginRegistersStep.login ||
-                      _step == LoginRegistersStep.register) {
-                    yield password(context);
-                    yield SizedBox(height: AppDimensions.mediumHeight);
-                    yield buttonValidateEmailPseudoPassword(context: context);
-                  }
-                }),
-              )),
+                      );
+                    } else if (_step == LoginRegistersStep.register) {
+                      yield Padding(
+                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                        child: Text(
+                          "TODO New email", //TODO INTL,
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).textTheme.headline6?.fontSize,
+                            color: AppColors.grey,
+                          ),
+                        ), //TODO INTL,
+                      );
+                      yield pseudo();
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                    }
+                    //yield CircularProgressIndicator();
+                    if (_step == LoginRegistersStep.login ||
+                        _step == LoginRegistersStep.register) {
+                      yield password(context);
+                      yield SizedBox(height: AppDimensions.mediumHeight);
+                      yield buttonValidateEmailPseudoPassword(context: context);
+                    }
+                  }),
+                )),
+              ),
             ),
           ],
         ),

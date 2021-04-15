@@ -134,7 +134,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   /// Default back navigation behavior
   ///
   void goBack() {
-    Navigator.pop(context);
+    Beamer.of(context).beamBack();
   }
 
   ///
