@@ -1,43 +1,61 @@
-part of 'authentication_bloc.dart';
+import 'package:meta/meta.dart';
 
 @immutable
-abstract class AuthenticationState extends Equatable {
-  AuthenticationState();
+abstract class AuthenticationState {}
 
+class InitialAuthenticationState extends AuthenticationState {
   @override
-  List<Object> get props => [];
+  String toString() {
+    return 'InitialAuthenticationState';
+  }
 }
 
-class AuthInitial extends AuthenticationState {}
-
-class AuthProcessing extends AuthenticationState {}
-
-class AuthNo extends AuthenticationState {}
-
-class AuthAnonymous extends AuthenticationState {
-  final User firebaseUser;
-
-  AuthAnonymous(this.firebaseUser);
-
+class AuthenticationProcessing extends AuthenticationState {
   @override
-  List<Object> get props => [firebaseUser];
+  String toString() {
+    return 'AuthenticationProcessingState';
+  }
 }
 
-class AuthEmail extends AuthenticationState {
-  final User firebaseUser;
-  final Player player;
-
-  AuthEmail({required this.firebaseUser, required this.player});
-
+class AuthenticationLocalLoaded extends AuthenticationState {
   @override
-  List<Object> get props => [firebaseUser, player];
+  String toString() {
+    return 'AuthenticationLocalLoaded';
+  }
 }
 
-class AuthError extends AuthenticationState {
-  final String error;
+class AuthenticationSuccess extends AuthenticationState {
+  @override
+  String toString() {
+    return 'AuthenticationSuccessState';
+  }
+}
 
-  AuthError({required this.error});
+class AuthenticationError extends AuthenticationState {
+  final String? error;
+
+  AuthenticationError({this.error});
 
   @override
-  List<Object> get props => [error];
+  String toString() {
+    return 'AuthenticationErrorState';
+  }
+}
+
+class WrongPassword extends AuthenticationState {
+  final String? error;
+
+  WrongPassword({this.error});
+
+  @override
+  String toString() {
+    return 'WrongPassword';
+  }
+}
+
+class LoggedOut extends AuthenticationState {
+  @override
+  String toString() {
+    return 'LoggedOutState';
+  }
 }

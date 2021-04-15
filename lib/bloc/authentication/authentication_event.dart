@@ -1,16 +1,39 @@
-part of 'authentication_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
-@immutable
-abstract class AuthenticationEvent {}
+abstract class AuthenticationEvent extends Equatable {}
 
-class AppStartEvent extends AuthenticationEvent {}
+class LoginEvent extends AuthenticationEvent {
+  final String login;
+  final String password;
 
-class LoginAnonymousEvent extends AuthenticationEvent {}
+  LoginEvent({required this.login, required this.password});
 
-class ConvertAnonymousToEmailEvent extends AuthenticationEvent {}
+  @override
+  List<Object> get props => [login];
+}
 
-class LoginEmailEvent extends AuthenticationEvent {}
+class RegisterEvent extends AuthenticationEvent {
+  final String login;
+  final String password;
 
-class RegisterEmailEvent extends AuthenticationEvent {}
+  RegisterEvent({required this.login, required this.password});
 
-class LogoutEvent extends AuthenticationEvent {}
+  @override
+  List<Object> get props => [login];
+}
+
+class LogoutEvent extends AuthenticationEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class ResetEvent extends AuthenticationEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class LoadLocalAuthenticationManager extends AuthenticationEvent {
+  @override
+  List<Object> get props => [];
+}

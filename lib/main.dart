@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
+import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/navigation/hex_location.dart';
@@ -33,18 +34,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        StreamProvider<User?>(
-          create: (BuildContext context) =>
-              FirebaseAuth.instance.authStateChanges(),
-          initialData: null,
-        ),
-      ],
-      child: ChangeNotifierProxyProvider<User?, Player>(
-        create: (_) => Player(), // Should be initialised in MainScaffold
-        update: (_, firebaseUser, player) =>
-            player..updateFirebase(firebaseUser),
+    return BlocProvider<AuthenticationBloc>(
+        create: (context) => AuthenticationBloc(AuthenticationApiProvider()),
         child:
 
             /* BlocProvider<AuthenticationBloc>(
@@ -66,8 +57,6 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           debugShowCheckedModeBanner: false,
-        ),
-      ),
-    );
+        ));
   }
 }

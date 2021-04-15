@@ -1,18 +1,16 @@
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/core/authentication/firebase_user.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
+import 'package:hex_game/bloc/authentication/authentication_event.dart';
 import 'package:hex_game/core/firebase_user_storage.dart';
-import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
-import 'package:hex_game/ui/components/main_scaffold.dart';
-import 'package:hex_game/ui/screens/player_screen.dart';
+import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
-import 'package:hex_game/utils/log.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
@@ -28,7 +26,7 @@ class LoginRegisterScreen extends StatefulWidget {
 
 enum LoginRegistersStep { enterEmail, login, register }
 
-class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
+class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _email = new TextEditingController();
@@ -212,8 +210,10 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                         context: context);
                 print("newPlayer : " + newPlayer.toString());
               } else if (_step == LoginRegistersStep.login) {
-                await FirebaseUser.signIn(
-                    email: _email.text, password: _password.text);
+                BlocProvider.of<AuthenticationBloc>(context).add(
+                    LoginEvent(login: _email.text, password: _password.text));
+/*                 await FirebaseUser.signIn(
+                    email: _email.text, password: _password.text); */
                 print("Player logged");
               }
             } catch (e) {
@@ -293,15 +293,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MainScaffold(
-      body: Consumer<User?>(builder: (context, user, child) {
-        if (user == null || user.isAnonymous) {
-          return formLoginRegisterPlayer();
-        } else {
-          return Text('Wrong page, you are already connected');
-        }
-      }),
-    );
+  Widget buildScreen(BuildContext context) {
+    return formLoginRegisterPlayer();
   }
 }

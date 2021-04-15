@@ -1,0 +1,12 @@
+# To execute : flutter pub run build_runner build --verbose --delete-conflicting-outputs
+# Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
+
+targets:
+  $default:
+    sources:
+      - lib/**
+      - schema*.graphql
+    builders:
+      json_serializable:
+        options:
+          include_if_null: false
