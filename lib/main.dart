@@ -33,18 +33,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        StreamProvider<User?>(
-          create: (BuildContext context) =>
-              FirebaseAuth.instance.authStateChanges(),
-          initialData: null,
-        ),
-      ],
-      child: ChangeNotifierProxyProvider<User?, Player>(
-        create: (_) => Player(), // Should be initialised in MainScaffold
-        update: (_, firebaseUser, player) =>
-            player..updateFirebase(firebaseUser),
+    return BlocProvider<AuthenticationBloc>(
+        create: (context) => AuthenticationBloc(AuthenticationApiProvider()),
         child:
 
             /* BlocProvider<AuthenticationBloc>(
@@ -66,8 +56,6 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           debugShowCheckedModeBanner: false,
-        ),
-      ),
-    );
+        ));
   }
 }
