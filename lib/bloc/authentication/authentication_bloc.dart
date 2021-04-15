@@ -1,7 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/core/authentication/authentication_manager.dart';
+import 'package:hex_game/models/authentication/token.dart';
+import 'package:tuple/tuple.dart';
 
 import './bloc.dart';
 
@@ -24,7 +28,7 @@ class AuthenticationBloc
       yield AuthenticationLocalLoaded();
     }
 
-    if (event is RegisterEvent) {
+/*     if (event is RegisterEvent) {
       try {
         Tuple2<Token, String> tuble = await _provider.register(
             email: event.login.toLowerCase(), password: event.password);
@@ -39,29 +43,20 @@ class AuthenticationBloc
       } catch (e) {
         yield AuthenticationError(error: 'Login failed');
       }
-    }
+    } */
 
     if (event is LoginEvent) {
       try {
-        Tuple2<Token, String> tuble = await _provider.login(
+        User? user = await _provider.login(
             email: event.login.toLowerCase(), password: event.password);
-        Token token = tuble.item1;
-        String userId = tuble.item2;
         await AuthenticationManager.instance.doLogin(
             login: event.login,
             password: event.password,
-            token: token,
-            userId: userId);
+            //token: token,
+            userId: user!.uid);
         yield AuthenticationSuccess();
       } catch (e) {
-        if ((e?.errors?.last?.extensions["exception"]["data"]["message"]
-                    .last["messages"]?.last["message"] ?? //TODO
-                "") ==
-            "Identifier or password invalid.") {
-          yield WrongPassword(error: "Wrong password");
-        } else {
-          yield AuthenticationError(error: 'Login failed');
-        }
+        yield AuthenticationError(error: 'Login failed');
       }
     }
     if (event is LogoutEvent) {

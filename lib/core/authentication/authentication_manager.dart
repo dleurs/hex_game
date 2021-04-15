@@ -1,4 +1,5 @@
 import 'package:hex_game/core/local_storage_manager.dart';
+import 'package:hex_game/models/authentication/token.dart';
 
 class AuthenticationManager {
   AuthenticationManager._privateConstructor();
@@ -38,9 +39,9 @@ class AuthenticationManager {
 
   String? get password => _password;
 
-  //Token _token;
+  Token? _token;
 
-  //Token get token => _token;
+  Token? get token => _token;
 
   String? _userId;
 
@@ -61,11 +62,12 @@ class AuthenticationManager {
   Future<void> doLogin(
       {required String login,
       required String password,
-      /*Token token,*/ required String userId}) async {
+      Token? token,
+      required String userId}) async {
     _isLoggedIn = true;
     _login = login;
     _password = password;
-    //_token = token;
+    _token = token;
     _userId = userId;
     await _save();
   }
@@ -76,9 +78,7 @@ class AuthenticationManager {
   }
 
   Future<void> updateCredentials(
-      {String? login,
-      String? password,
-      /*Token token,*/ String? userId}) async {
+      {String? login, String? password, Token? token, String? userId}) async {
     if (login != null) {
       _login = login;
     }
@@ -87,9 +87,9 @@ class AuthenticationManager {
       _password = password;
     }
 
-/*     if (token != null) {
+    if (token != null) {
       _token = token;
-    } */
+    }
 
     await _save();
   }
@@ -98,7 +98,7 @@ class AuthenticationManager {
     _isLoggedIn = false;
     _login = null;
     _password = null;
-    //_token = null;
+    _token = null;
     _userId = null;
     await _save();
   }
@@ -109,7 +109,7 @@ class AuthenticationManager {
     await _storageManager.setSecureString(PASSWORD, _password);
     await _storageManager.setBoolean(IS_LOGGED_IN, _isLoggedIn);
     await _storageManager.setString(USER_ID, _userId);
-    //await _storageManager.setJson(TOKEN, _token);
+    await _storageManager.setJson(TOKEN, _token);
   }
 
   Future<void> clear() async {
@@ -121,7 +121,7 @@ class AuthenticationManager {
     String str = "AuthenticationManager{";
     str += "_isLoggedIn:" + _isLoggedIn.toString() + ", ";
     str += "_login:" + (_login ?? "null") + ", ";
-    //str += "_token:" + _token.toShortString() + ", ";
+    str += "_token:" + (_token?.toShortString() ?? "null") + ", ";
     str += "_userId:" + (_userId ?? "null");
     str += "}";
     return str;

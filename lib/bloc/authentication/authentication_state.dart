@@ -32,7 +32,7 @@ class AuthenticationSuccess extends AuthenticationState {
 }
 
 class AuthenticationError extends AuthenticationState {
-  final String error;
+  final String? error;
 
   AuthenticationError({this.error});
 
@@ -43,7 +43,7 @@ class AuthenticationError extends AuthenticationState {
 }
 
 class WrongPassword extends AuthenticationState {
-  final String error;
+  final String? error;
 
   WrongPassword({this.error});
 

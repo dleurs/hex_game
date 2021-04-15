@@ -12,3 +12,6 @@ deploy-web: build-web firebase-deploy
 	
 generate-intl: ## Generate localization file
 	new-flutter pub run intl_utils:generate
+
+generate-model: ## Generate Json serialization for model classes and GraphQL classes from graphql files
+	new-flutter pub run build_runner build --delete-conflicting-outputs
