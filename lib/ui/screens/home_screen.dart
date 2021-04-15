@@ -23,25 +23,20 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends BaseScreenState<HomeScreen> {
   @override
   Widget buildScreen(BuildContext context) {
-    return Consumer<User?>(builder: (context, user, child) {
-      return Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text(
-                S.of(context).hex_game_title,
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Text(
-                Intl.getCurrentLocale(),
-              ),
-              Text(
-                user?.uid ?? "User not connected",
-              ),
-            ],
-          ),
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              S.of(context).hex_game_title,
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            Text(
+              Intl.getCurrentLocale(),
+            ),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 }

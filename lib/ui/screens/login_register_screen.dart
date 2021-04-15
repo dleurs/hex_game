@@ -294,12 +294,6 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
   @override
   Widget buildScreen(BuildContext context) {
-    return Consumer<User?>(builder: (context, user, child) {
-      if (user == null || user.isAnonymous) {
-        return formLoginRegisterPlayer();
-      } else {
-        return Text('Wrong page, you are already connected');
-      }
-    });
+    return formLoginRegisterPlayer();
   }
 }
