@@ -19,6 +19,8 @@ class PlayersScreen extends StatefulWidget {
 
   static final queryParameterPlayer = 'player';
 
+  static final playerSlug = 'playerSlug';
+
   @override
   _PlayersScreenState createState() => _PlayersScreenState();
 }
@@ -41,11 +43,14 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
               (player) => ListTile(
                 title: Text(player.pseudo!),
                 subtitle: Text(player.email!),
-                //onTap: () => context.beamToNamed('/books/${book['id']}'),
+                //onTap: () => beamToNamed('/players/${player.pseudo}'),
                 onTap: () => context.currentBeamLocation.update(
                   (state) => state.copyWith(
-                    pathBlueprintSegments: ['player', ':playerSlug'],
-                    pathParameters: {'playerSlug': player.pseudo!},
+                    pathBlueprintSegments: [
+                      PlayersScreen.uri.pathSegments[0],
+                      ':' + PlayersScreen.playerSlug
+                    ],
+                    pathParameters: {PlayersScreen.playerSlug: player.pseudo!},
                   ),
                 ),
               ),
