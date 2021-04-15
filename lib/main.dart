@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
+import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/navigation/hex_location.dart';

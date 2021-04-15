@@ -28,4 +28,8 @@ class AuthenticationApiProvider {
       }
     }
   }
+
+  Future<void> logout() {
+    return Future.value();
+  }
 }

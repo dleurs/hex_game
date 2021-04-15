@@ -1,7 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/models/player.dart';
-import 'package:hex_game/ui/components/main_scaffold.dart';
 
 // DATA
 List<Player> players = [
@@ -25,9 +24,8 @@ class PlayersScreen extends StatelessWidget {
             .queryParameters[PlayersScreen.queryParameterPlayer] ??
         '';
 
-    return MainScaffold(
-      body: Center(
-          child: ListView(
+    return Center(
+      child: ListView(
         children: players
             .where((player) => (player.pseudo != null &&
                 player.pseudo!
@@ -47,7 +45,7 @@ class PlayersScreen extends StatelessWidget {
               ),
             )
             .toList(),
-      )),
+      ),
     );
   }
 }
