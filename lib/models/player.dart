@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/core/firebase_user_storage.dart';
+import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 
 class Player extends ChangeNotifier {
   String? uid;
@@ -16,14 +17,14 @@ class Player extends ChangeNotifier {
       this.email,
       this.optInNewsletter = false});
 
-  static const String uidArg = "uid";
-  static const String isAnonymousArg = "isAnonymous";
-  static const String pseudoArg = "pseudo";
-  static const String emailArg = "email";
-  static const String dateRegisterEmailArg = "dateRegisterEmail";
-  static const String dateRegisterAnonymousArg = "dateRegisterAnonymous";
-  static const String dateLastUpdateArg = "dateLastUpdate";
-  static const String optInNewsletterArg = "optInNewsletter";
+  static const String UID = "uid";
+  static const String IS_ANONYMOUS = "isAnonymous";
+  static const String PSEUDO = "pseudo";
+  static const String EMAIL = "email";
+  static const String DATE_REGISTER_EMAIL = "dateRegisterEmail";
+  static const String DATE_REGISTER_ANONYMOUS = "dateRegisterAnonymous";
+  static const String DATE_LAST_UPDATE = "dateLastUpdate";
+  static const String OPT_IN_NEWSLETTER = "optInNewsletter";
 
   bool isLoggedIn() {
     return (uid != null);
@@ -34,7 +35,7 @@ class Player extends ChangeNotifier {
       return;
     }
     Player? updatedPlayer =
-        await FirestoreUserStorage.getPlayer(uid: firebaseUser.uid);
+        await AuthenticationApiProvider().getPlayer(uid: firebaseUser.uid);
     if (updatedPlayer == null) {
       return null;
     }
@@ -52,32 +53,32 @@ class Player extends ChangeNotifier {
 
   @override
   String toString() {
-    return 'Player{$uidArg: $uid, $isAnonymousArg: $isAnonymous, $pseudoArg: $pseudo, $emailArg: $email}';
+    return 'Player{$UID: $uid, $IS_ANONYMOUS: $isAnonymous, $PSEUDO: $pseudo, $EMAIL: $email}';
   }
 
   Map<String, dynamic> toFirebase({required SaveFirestoreOperation operation}) {
     Map<String, dynamic> mapToFirebase = {
-      uidArg: uid,
-      isAnonymousArg: isAnonymous,
-      pseudoArg: pseudo,
-      emailArg: email,
-      optInNewsletterArg: optInNewsletter,
-      dateLastUpdateArg: DateTime.now()
+      UID: uid,
+      IS_ANONYMOUS: isAnonymous,
+      PSEUDO: pseudo,
+      //EMAIL: email,
+      OPT_IN_NEWSLETTER: optInNewsletter,
+      DATE_LAST_UPDATE: DateTime.now()
     };
     if (operation == SaveFirestoreOperation.emailRegister) {
-      mapToFirebase[dateRegisterEmailArg] = DateTime.now();
+      mapToFirebase[DATE_REGISTER_EMAIL] = DateTime.now();
     }
     if (operation == SaveFirestoreOperation.anonymousRegister) {
-      mapToFirebase[dateRegisterAnonymousArg] = DateTime.now();
+      mapToFirebase[DATE_REGISTER_ANONYMOUS] = DateTime.now();
     }
     return mapToFirebase;
   }
 
-  static Player fromFirebaseUser(User? firebaseUser) {
-    if (firebaseUser == null) {
+  static Player fromFirebase(DocumentSnapshot? fireDoc) {
+    if (fireDoc == null) {
       return Player();
     }
-    return Player(uid: firebaseUser.uid, email: firebaseUser.email);
+    return Player(uid: fireDoc[UID], pseudo: fireDoc[PSEUDO]);
   }
 }
 

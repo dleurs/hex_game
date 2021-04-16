@@ -19,7 +19,7 @@ class AuthenticationManager {
 
   static const String TOKEN = "token";
 
-  static const String USER_ID = "userId";
+  static const String USER_ID = "uid";
 
   static Future<void> load() async {
     await _instance._load();
@@ -29,7 +29,7 @@ class AuthenticationManager {
 
   bool? _isLoggedIn;
 
-  bool? get isLoggedIn => _isLoggedIn;
+  bool get isLoggedIn => _isLoggedIn ?? false;
 
   String? _login;
 
@@ -43,16 +43,16 @@ class AuthenticationManager {
 
   Token? get token => _token;
 
-  String? _userId;
+  String? _uid;
 
-  String? get userId => _userId;
+  String? get userId => _uid;
 
   Future<void> _load() async {
     await _storageManager.open();
     _isLoggedIn = _storageManager.getBoolean(IS_LOGGED_IN) ?? false;
     _login = _storageManager.getString(LOGIN);
     _password = await _storageManager.getSecureString(PASSWORD);
-    _userId = _storageManager.getString(USER_ID);
+    _uid = _storageManager.getString(USER_ID);
     var tokenJson = _storageManager.getJson(TOKEN);
     if (tokenJson != null) {
       //_token = Token.fromJson(tokenJson);
@@ -68,12 +68,12 @@ class AuthenticationManager {
     _login = login;
     _password = password;
     _token = token;
-    _userId = userId;
+    _uid = userId;
     await _save();
   }
 
   Future<void> saveUserId(String userId) async {
-    _userId = userId;
+    _uid = userId;
     await _save();
   }
 
@@ -99,7 +99,7 @@ class AuthenticationManager {
     _login = null;
     _password = null;
     _token = null;
-    _userId = null;
+    _uid = null;
     await _save();
   }
 
@@ -108,7 +108,7 @@ class AuthenticationManager {
     await _storageManager.setString(LOGIN, _login);
     await _storageManager.setSecureString(PASSWORD, _password);
     await _storageManager.setBoolean(IS_LOGGED_IN, _isLoggedIn);
-    await _storageManager.setString(USER_ID, _userId);
+    await _storageManager.setString(USER_ID, _uid);
     await _storageManager.setJson(TOKEN, _token);
   }
 
@@ -122,7 +122,7 @@ class AuthenticationManager {
     str += "_isLoggedIn:" + _isLoggedIn.toString() + ", ";
     str += "_login:" + (_login ?? "null") + ", ";
     str += "_token:" + (_token?.toShortString() ?? "null") + ", ";
-    str += "_userId:" + (_userId ?? "null");
+    str += "_userId:" + (_uid ?? "null");
     str += "}";
     return str;
   }

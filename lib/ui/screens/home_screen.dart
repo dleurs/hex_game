@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
@@ -34,6 +35,10 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
             Text(
               Intl.getCurrentLocale(),
             ),
+            Text(AuthenticationManager.instance.isLoggedIn
+                ? "User logged " +
+                    (AuthenticationManager.instance.login ?? "no pseudo")
+                : "User not logged"),
           ],
         ),
       ),
