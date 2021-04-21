@@ -10,8 +10,6 @@ class AuthenticationManager {
 
   static const String _AUTH_KEY = "hex_game.authentication";
 
-  static const String IS_LOGGED_IN = "isLoggedIn";
-
   static const String EMAIL = "email";
 
   static const String PSEUDO = "pseudo";
@@ -22,19 +20,14 @@ class AuthenticationManager {
 
   static const String UID = "uid";
 
-  static Future<void> load() async {
+  static Future<bool> load() async {
     await _instance._load();
+    return true;
   }
 
   final LocalStorageManager _storageManager = LocalStorageManager(_AUTH_KEY);
 
-  bool? _isLoggedIn;
-
-  bool get isLoggedIn => _isLoggedIn ?? false;
-
-  bool? _appAlreadyOpenned;
-
-  bool get appAlreadyOpenned => _appAlreadyOpenned ?? false;
+  bool get isLoggedIn => _uid != null;
 
   String? _email;
 
@@ -56,13 +49,8 @@ class AuthenticationManager {
 
   String? get uid => _uid;
 
-  void appOpenned() async {
-    _appAlreadyOpenned = true;
-  }
-
   Future<void> _load() async {
     await _storageManager.open();
-    _isLoggedIn = _storageManager.getBoolean(IS_LOGGED_IN) ?? false;
     _email = _storageManager.getString(EMAIL);
     _pseudo = _storageManager.getString(PSEUDO);
     _password = await _storageManager.getSecureString(PASSWORD);
@@ -88,7 +76,6 @@ class AuthenticationManager {
 
   Future<void> doLogin(
       {required String email, required String password, String? pseudo, Token? token, required String userId}) async {
-    _isLoggedIn = true;
     _email = email;
     _pseudo = pseudo;
     _password = password;
@@ -102,7 +89,12 @@ class AuthenticationManager {
     await _save();
   }
 
-  Future<void> updateCredentials({String? email, String? pseudo, String? password, Token? token, String? uid}) async {
+  Future<void> updateCredentials(
+      {bool? isLoggedIn, String? email, String? pseudo, String? password, Token? token, String? uid}) async {
+    if (uid != null) {
+      _uid = uid;
+    }
+
     if (email != null) {
       _email = email;
     }
@@ -123,7 +115,6 @@ class AuthenticationManager {
   }
 
   Future<void> doLogout() async {
-    _isLoggedIn = false;
     _email = null;
     _pseudo = null;
     _password = null;
@@ -137,7 +128,6 @@ class AuthenticationManager {
     await _storageManager.setSecureString(EMAIL, _email);
     await _storageManager.setSecureString(PSEUDO, _pseudo);
     await _storageManager.setSecureString(PASSWORD, _password);
-    await _storageManager.setBoolean(IS_LOGGED_IN, _isLoggedIn);
     await _storageManager.setString(UID, _uid);
     await _storageManager.setJson(TOKEN, _token);
   }
@@ -149,7 +139,6 @@ class AuthenticationManager {
 
   String toString() {
     String str = "AuthenticationManager{\n";
-    str += "_isLoggedIn:" + _isLoggedIn.toString() + ",\n";
     str += "_email:" + (_email ?? "null") + ",\n";
     str += "_pseudo:" + (_pseudo ?? "null") + ",\n";
     str += "_uid:" + (_uid ?? "null") + ",\n";

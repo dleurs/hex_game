@@ -19,13 +19,10 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
     if (event is SynchroniseAuthenticationManager) {
       try {
-        await AuthenticationManager.load();
+        //await AuthenticationManager.load();
         User? user = _provider.dbAuth.currentUser;
-        if (user == null &&
-            AuthenticationManager.instance.email != null &&
-            AuthenticationManager.instance.password != null) {
-          await _provider.login(
-              email: AuthenticationManager.instance.email!, password: AuthenticationManager.instance.password!);
+        if (user == null || user.uid.isEmpty) {
+          await AuthenticationManager.instance.doLogout();
         }
         if (AuthenticationManager.instance.uid == null && user != null && user.uid.isNotEmpty) {
           String? pseudo;
@@ -36,8 +33,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
           AuthenticationManager.instance.updateCredentials(email: user.email, pseudo: pseudo, uid: user.uid);
         }
       } catch (e) {}
-
-      yield AuthenticationSuccess();
+      yield SyncSuccess();
     }
     if (event is RegisterEvent) {
       try {

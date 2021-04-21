@@ -21,7 +21,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @override
   void initState() {
     super.initState();
-    appAlreadyOpenned = true;
     print("ScreenLifecycle: ${this.widget.toStringShort()}: initState ${this.toString()}");
   }
 
@@ -60,14 +59,14 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @override
   Widget build(BuildContext context) {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: build ${this.toString()}");
-    bool? appAlreadyOpenned = AuthenticationManager.instance.appAlreadyOpenned;
-    print("appAlreadyOpenned : " + appAlreadyOpenned.toString());
     return BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is LoggedOut) {
             this.onLoggedOut();
           } else if (state is AuthenticationSuccess) {
             this.onLoggedIn();
+          } else if (state is SyncSuccess) {
+            this.onSync();
           } else if (state is WrongPassword) {
             this.onWrongPassword();
           }
@@ -75,25 +74,35 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         child: Scaffold(
           //backgroundColor: this.backgroundColor,
           appBar: this.buildAppBar(context),
-          body: appAlreadyOpenned
-              ? this.buildScreen(context)
-              : FutureBuilder<bool>(
-                  future: AuthenticationManager.instance.userAlreadyOpenApp(),
-                  builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                    if (snapshot.hasData) {
-                      bool userAlreadyOpenApp = snapshot.data ?? false;
-                      if (userAlreadyOpenApp == false) {
-                        print("snapshot.hasData : First time opening the app");
-                        AuthenticationManager.instance.appOpenned();
-                        BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
-                      }
-                      return SplashScreen();
-                    } else if (snapshot.hasData) {
-                      return SplashScreen(message: "Error userAlreadyOpenApp " + snapshot.error.toString());
-                    } else {
-                      return SplashScreen();
+          body: (BlocProvider.of<AuthenticationBloc>(context).state is InitialAuthenticationState)
+              ? FutureBuilder<bool>(
+                  future: AuthenticationManager.load(),
+                  builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
+                    if (!snapshotAuthManagerLoad.hasData) {
+                      return SplashScreen(message: "Load Authentication");
                     }
-                  }),
+                    return FutureBuilder<bool>(
+                      future: AuthenticationManager.instance.userAlreadyOpenApp(),
+                      builder: (BuildContext context, AsyncSnapshot<bool> snapshotUserAlreadyUsed) {
+                        if (snapshotUserAlreadyUsed.hasData) {
+                          bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
+                          if (userAlreadyOpenApp == false) {
+                            print("snapshot.hasData : First time opening the app");
+                            BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
+                            return SplashScreen();
+                          } else {
+                            return this.buildScreen(context);
+                          }
+                        } else if (snapshotUserAlreadyUsed.hasData) {
+                          return SplashScreen(
+                              message: "Error userAlreadyOpenApp " + snapshotUserAlreadyUsed.error.toString());
+                        } else {
+                          return SplashScreen();
+                        }
+                      },
+                    );
+                  })
+              : this.buildScreen(context),
           bottomNavigationBar: this.buildBottomNavigationBar(context),
           floatingActionButton: this.buildFloatingActionButton(context),
         ));
@@ -177,6 +186,13 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     //BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
   }
 
+  void onSync() {
+    print("OnSync");
+    //Beamer.of(context).beamTo(context.currentBeamLocation);
+    setState(() {});
+    //Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
+  }
+
   ///
   /// Logout event has completed
   /// Clear all navigation history and push login page
@@ -196,7 +212,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   ///
   void onLoggedIn() {
     print("OnLoggedIn");
-
     Beamer.of(context).beamToNamed(HomeScreen.uri.path);
   }
 
