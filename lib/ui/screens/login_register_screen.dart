@@ -6,7 +6,6 @@ import 'package:hex_game/bloc/authentication/authentication_event.dart';
 import 'package:hex_game/bloc/authentication/authentication_state.dart';
 import 'package:hex_game/bloc/form_login_register/form_login_register_bloc.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
-import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';

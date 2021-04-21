@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_state.dart';
+import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
@@ -10,6 +11,8 @@ import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
+import 'package:hex_game/ui/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @protected
@@ -18,6 +21,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @override
   void initState() {
     super.initState();
+    appAlreadyOpenned = true;
     print("ScreenLifecycle: ${this.widget.toStringShort()}: initState ${this.toString()}");
   }
 
@@ -51,9 +55,13 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: didChangeDependencies ${this.toString()}");
   }
 
+  //late bool appAlreadyOpenned;
+
   @override
   Widget build(BuildContext context) {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: build ${this.toString()}");
+    bool? appAlreadyOpenned = AuthenticationManager.instance.appAlreadyOpenned;
+    print("appAlreadyOpenned : " + appAlreadyOpenned.toString());
     return BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is LoggedOut) {
@@ -67,7 +75,25 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         child: Scaffold(
           //backgroundColor: this.backgroundColor,
           appBar: this.buildAppBar(context),
-          body: this.buildScreen(context),
+          body: appAlreadyOpenned
+              ? this.buildScreen(context)
+              : FutureBuilder<bool>(
+                  future: AuthenticationManager.instance.userAlreadyOpenApp(),
+                  builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    if (snapshot.hasData) {
+                      bool userAlreadyOpenApp = snapshot.data ?? false;
+                      if (userAlreadyOpenApp == false) {
+                        print("snapshot.hasData : First time opening the app");
+                        AuthenticationManager.instance.appOpenned();
+                        BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
+                      }
+                      return SplashScreen();
+                    } else if (snapshot.hasData) {
+                      return SplashScreen(message: "Error userAlreadyOpenApp " + snapshot.error.toString());
+                    } else {
+                      return SplashScreen();
+                    }
+                  }),
           bottomNavigationBar: this.buildBottomNavigationBar(context),
           floatingActionButton: this.buildFloatingActionButton(context),
         ));
@@ -100,7 +126,11 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         IconButton(
           icon: Icon(FlutterIconCom.user),
           onPressed: () {
-            Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
+            if (AuthenticationManager.instance.isLoggedIn) {
+              Beamer.of(context).beamToNamed(PlayerScreen.uri(playerSlug: AuthenticationManager.instance.pseudo).path);
+            } else {
+              Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
+            }
           },
         )
       ],
@@ -155,6 +185,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   ///
   void onLoggedOut() {
     print("OnLoggedOut");
+    Beamer.of(context).beamToNamed(HomeScreen.uri.path);
     //Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
   }
 
@@ -165,6 +196,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   ///
   void onLoggedIn() {
     print("OnLoggedIn");
+
     Beamer.of(context).beamToNamed(HomeScreen.uri.path);
   }
 

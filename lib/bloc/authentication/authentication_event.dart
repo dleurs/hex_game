@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 abstract class AuthenticationEvent extends Equatable {}
 
@@ -34,7 +33,7 @@ class ResetEvent extends AuthenticationEvent {
   List<Object> get props => [];
 }
 
-class LoadLocalAuthenticationManager extends AuthenticationEvent {
+class SynchroniseAuthenticationManager extends AuthenticationEvent {
   @override
   List<Object> get props => [];
 }

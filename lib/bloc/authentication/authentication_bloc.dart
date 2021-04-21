@@ -4,9 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/core/authentication/authentication_manager.dart';
-import 'package:hex_game/models/authentication/token.dart';
 import 'package:hex_game/models/player.dart';
-import 'package:tuple/tuple.dart';
 
 import './bloc.dart';
 
@@ -19,10 +17,26 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
     yield AuthenticationProcessing();
 
-    if (event is LoadLocalAuthenticationManager) {
-      if (AuthenticationManager.instance.isLoggedIn == null || AuthenticationManager.instance.isLoggedIn == false) {
+    if (event is SynchroniseAuthenticationManager) {
+      try {
         await AuthenticationManager.load();
-      }
+        User? user = _provider.dbAuth.currentUser;
+        if (user == null &&
+            AuthenticationManager.instance.email != null &&
+            AuthenticationManager.instance.password != null) {
+          await _provider.login(
+              email: AuthenticationManager.instance.email!, password: AuthenticationManager.instance.password!);
+        }
+        if (AuthenticationManager.instance.uid == null && user != null && user.uid.isNotEmpty) {
+          String? pseudo;
+          if (user.email != null) {
+            Player? player = await _provider.getPlayer(uid: user.uid);
+            pseudo = player!.pseudo;
+          }
+          AuthenticationManager.instance.updateCredentials(email: user.email, pseudo: pseudo, uid: user.uid);
+        }
+      } catch (e) {}
+
       yield AuthenticationSuccess();
     }
     if (event is RegisterEvent) {

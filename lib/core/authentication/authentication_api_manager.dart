@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/utils/exceptions.dart';
-import 'package:tuple/tuple.dart';
 
 class AuthenticationApiProvider {
   //ArtemisClient get _client => ArtemisClient(Config.authApiEndpoint);
@@ -49,8 +48,8 @@ class AuthenticationApiProvider {
     }
   }
 
-  Future<void> logout() {
-    return Future.value();
+  Future<void> logout() async {
+    await dbAuth.signOut();
   }
 
   Future<Player?> getPlayer({required String uid}) async {

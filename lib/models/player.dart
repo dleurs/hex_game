@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
@@ -10,12 +9,7 @@ class Player extends ChangeNotifier {
   String? pseudo;
   String? email;
   bool optInNewsletter;
-  Player(
-      {this.uid,
-      this.isAnonymous = false,
-      this.pseudo,
-      this.email,
-      this.optInNewsletter = false});
+  Player({this.uid, this.isAnonymous = false, this.pseudo, this.email, this.optInNewsletter = false});
 
   static const String UID = "uid";
   static const String IS_ANONYMOUS = "isAnonymous";
@@ -34,8 +28,7 @@ class Player extends ChangeNotifier {
     if (firebaseUser == null) {
       return;
     }
-    Player? updatedPlayer =
-        await AuthenticationApiProvider().getPlayer(uid: firebaseUser.uid);
+    Player? updatedPlayer = await AuthenticationApiProvider().getPlayer(uid: firebaseUser.uid);
     if (updatedPlayer == null) {
       return null;
     }

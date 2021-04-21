@@ -1,5 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
@@ -21,8 +23,7 @@ class PlayerScreen extends StatefulWidget {
   }
 
   static Uri uri({String? playerSlug}) {
-    return Uri(
-        path: PlayersScreen.uri.path + "/" + (playerSlug ?? ":playerSlug"));
+    return Uri(path: PlayersScreen.uri.path + "/" + (playerSlug ?? ":playerSlug"));
   }
 
   @override
@@ -51,6 +52,11 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
               "Player slug : " + checkedPlayerSlug!,
               style: Theme.of(context).textTheme.headline4,
             ),
+            ElevatedButton(
+                onPressed: () {
+                  BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
+                },
+                child: Text("Logout"))
           ],
         ),
       ),

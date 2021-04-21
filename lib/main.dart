@@ -1,6 +1,4 @@
 import 'package:beamer/beamer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
-import 'package:hex_game/models/player.dart';
 import 'package:hex_game/navigation/hex_location.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:provider/provider.dart';
@@ -34,15 +31,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthenticationBloc>(
-        create: (context) => AuthenticationBloc(AuthenticationApiProvider()),
-        child:
-
-            /* BlocProvider<AuthenticationBloc>(
-        create: (context) => AuthenticationBloc(
-            dbStore: FirebaseFirestore.instance, dbAuth: FirebaseAuth.instance)
-          ..add(AppStartEvent()), */
-            MaterialApp.router(
+    return MultiProvider(
+        providers: [
+          BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
+        ],
+        child: MaterialApp.router(
           title: "Hex Game",
           routerDelegate: routerDelegate,
           routeInformationParser: BeamerRouteInformationParser(),

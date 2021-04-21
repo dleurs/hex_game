@@ -20,7 +20,7 @@ class AuthenticationManager {
 
   static const String TOKEN = "token";
 
-  static const String USER_ID = "uid";
+  static const String UID = "uid";
 
   static Future<void> load() async {
     await _instance._load();
@@ -32,9 +32,13 @@ class AuthenticationManager {
 
   bool get isLoggedIn => _isLoggedIn ?? false;
 
+  bool? _appAlreadyOpenned;
+
+  bool get appAlreadyOpenned => _appAlreadyOpenned ?? false;
+
   String? _email;
 
-  String? get login => _email;
+  String? get email => _email;
 
   String? _pseudo;
 
@@ -50,7 +54,11 @@ class AuthenticationManager {
 
   String? _uid;
 
-  String? get userId => _uid;
+  String? get uid => _uid;
+
+  void appOpenned() async {
+    _appAlreadyOpenned = true;
+  }
 
   Future<void> _load() async {
     await _storageManager.open();
@@ -58,17 +66,30 @@ class AuthenticationManager {
     _email = _storageManager.getString(EMAIL);
     _pseudo = _storageManager.getString(PSEUDO);
     _password = await _storageManager.getSecureString(PASSWORD);
-    _uid = _storageManager.getString(USER_ID);
+    _uid = _storageManager.getString(UID);
     var tokenJson = _storageManager.getJson(TOKEN);
     if (tokenJson != null) {
       //_token = Token.fromJson(tokenJson);
     }
   }
 
+  Future<bool> userAlreadyOpenApp() async {
+    await _storageManager.open();
+    String USER_ALREADY_OPEN_APP = 'userAlreadyOpenApp';
+    bool _userAlreadyOpenApp = (_storageManager.getBoolean(USER_ALREADY_OPEN_APP) ?? false);
+    if (!_userAlreadyOpenApp) {
+      print("User open the app for the first time");
+      _storageManager.setBoolean(USER_ALREADY_OPEN_APP, true);
+    } else {
+      print("User already openned the app");
+    }
+    return (_userAlreadyOpenApp);
+  }
+
   Future<void> doLogin(
-      {required String login, required String password, String? pseudo, Token? token, required String userId}) async {
+      {required String email, required String password, String? pseudo, Token? token, required String userId}) async {
     _isLoggedIn = true;
-    _email = login;
+    _email = email;
     _pseudo = pseudo;
     _password = password;
     _token = token;
@@ -81,8 +102,7 @@ class AuthenticationManager {
     await _save();
   }
 
-  Future<void> updateCredentials(
-      {String? email, String? pseudo, String? password, Token? token, String? userId}) async {
+  Future<void> updateCredentials({String? email, String? pseudo, String? password, Token? token, String? uid}) async {
     if (email != null) {
       _email = email;
     }
@@ -118,7 +138,7 @@ class AuthenticationManager {
     await _storageManager.setSecureString(PSEUDO, _pseudo);
     await _storageManager.setSecureString(PASSWORD, _password);
     await _storageManager.setBoolean(IS_LOGGED_IN, _isLoggedIn);
-    await _storageManager.setString(USER_ID, _uid);
+    await _storageManager.setString(UID, _uid);
     await _storageManager.setJson(TOKEN, _token);
   }
 
@@ -128,12 +148,12 @@ class AuthenticationManager {
   }
 
   String toString() {
-    String str = "AuthenticationManager{";
-    str += "_isLoggedIn:" + _isLoggedIn.toString() + ", ";
-    str += "_email:" + (_email ?? "null") + ", ";
-    str += "_pseudo:" + (_pseudo ?? "null") + ", ";
-    str += "_token:" + (_token?.toShortString() ?? "null") + ", ";
-    str += "_userId:" + (_uid ?? "null");
+    String str = "AuthenticationManager{\n";
+    str += "_isLoggedIn:" + _isLoggedIn.toString() + ",\n";
+    str += "_email:" + (_email ?? "null") + ",\n";
+    str += "_pseudo:" + (_pseudo ?? "null") + ",\n";
+    str += "_uid:" + (_uid ?? "null") + ",\n";
+    str += "_token:" + (_token?.toShortString() ?? "null") + ",\n";
     str += "}";
     return str;
   }

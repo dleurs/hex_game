@@ -17,8 +17,7 @@ class LocalStorageManager {
       await _prefs?.reload();
     }
     print("Existing keys for keyStorage $keyStorage : ${getKeys()}");
-    print(
-        "Existing secure keys for keyStorage $keyStorage : ${await getSecureKeys()}");
+    print("Existing secure keys for keyStorage $keyStorage : ${await getSecureKeys()}");
   }
 
   Future<String?> getSecureString(String key) async {
@@ -36,10 +35,8 @@ class LocalStorageManager {
 
   void _checkPrefs() {
     if (_prefs == null) {
-      print(
-          "You need to call open() before accessing preferences for storage with key $keyStorage");
-      throw Exception(
-          "You need to call open() before accessing preferences for storage with key $keyStorage");
+      print("You need to call open() before accessing preferences for storage with key $keyStorage");
+      throw Exception("You need to call open() before accessing preferences for storage with key $keyStorage");
     }
   }
 
