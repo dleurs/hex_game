@@ -62,6 +62,12 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
+  Widget sizedBoxSmall() {
+    return SizedBox(
+      height: AppDimensions.smallHeight,
+    );
+  }
+
   TextFormField email({required bool readOnly}) {
     return TextFormField(
       readOnly: readOnly,
@@ -118,15 +124,12 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
   }
 
   Widget emailFoundOrNotMessage({required BuildContext context, required bool login0Register1}) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-      child: Text(
-        login0Register1 ? "TODO Email not found" : "TODO (Email found)", //TODO INTL,
-        style: TextStyle(
+    return Text(
+      login0Register1 ? "Email not found" : "Email found", //TODO INTL,
+      style: TextStyle(
           fontSize: Theme.of(context).textTheme.headline6?.fontSize,
-          color: AppColors.green,
-        ),
-      ),
+          color: AppColors.blue,
+          fontStyle: FontStyle.italic),
     );
   }
 
@@ -209,17 +212,10 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
             try {
               if (login0Register1) {
                 BlocProvider.of<AuthenticationBloc>(context)
-                    .add(RegisterEvent(login: _email.text, password: _password.text));
-/*                     await FirestoreUser.createUserWithPseudoEmailAndPassword(
-                        pseudo: _pseudo.text,
-                        email: _email.text,
-                        password: _password.text,
-                        context: context); */
+                    .add(RegisterEvent(email: _email.text, password: _password.text, pseudo: _pseudo.text));
               } else {
                 BlocProvider.of<AuthenticationBloc>(context)
-                    .add(LoginEvent(login: _email.text, password: _password.text));
-/*                 await FirebaseUser.signIn(
-                    email: _email.text, password: _password.text); */
+                    .add(LoginEvent(email: _email.text, password: _password.text));
                 print("Player logged");
               }
             } catch (e) {
@@ -252,18 +248,17 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                             yield welcomeMessage();
                             yield sizedBoxMedium();
                             yield email(readOnly: !(blocState is FormLoginRegisterInitial));
-                            yield sizedBoxMedium();
+                            yield sizedBoxSmall();
                             if (blocState is FormLoginRegisterInitial) {
                               yield buttonValidateEmail(context: context, loading: false);
                             } else if (blocState is CheckEmailProcessing) {
                               yield buttonValidateEmail(context: context, loading: true);
                             }
-                            yield sizedBoxMedium();
                             if (blocState is EmailDoesNotExist || blocState is EmailAlreadyExist) {
                               // Register
                               yield emailFoundOrNotMessage(
-                                  context: context, login0Register1: (blocState is EmailAlreadyExist));
-                              yield sizedBoxMedium();
+                                  context: context, login0Register1: (blocState is EmailDoesNotExist));
+                              yield sizedBoxSmall();
                             }
                             if (blocState is EmailDoesNotExist) {
                               // Register
@@ -277,7 +272,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                               yield buttonValidateEmailPseudoPassword(
                                   context: context,
                                   loading: BlocProvider.of<AuthenticationBloc>(context) is AuthenticationProcessing,
-                                  login0Register1: blocState is EmailAlreadyExist);
+                                  login0Register1: blocState is EmailDoesNotExist);
                             }
                           }),
                         ),

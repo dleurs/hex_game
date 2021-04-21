@@ -4,8 +4,7 @@ import 'package:hex_game/models/authentication/token.dart';
 class AuthenticationManager {
   AuthenticationManager._privateConstructor();
 
-  static final AuthenticationManager _instance =
-      AuthenticationManager._privateConstructor();
+  static final AuthenticationManager _instance = AuthenticationManager._privateConstructor();
 
   static AuthenticationManager get instance => _instance;
 
@@ -13,7 +12,9 @@ class AuthenticationManager {
 
   static const String IS_LOGGED_IN = "isLoggedIn";
 
-  static const String LOGIN = "login";
+  static const String EMAIL = "email";
+
+  static const String PSEUDO = "pseudo";
 
   static const String PASSWORD = "password";
 
@@ -31,9 +32,13 @@ class AuthenticationManager {
 
   bool get isLoggedIn => _isLoggedIn ?? false;
 
-  String? _login;
+  String? _email;
 
-  String? get login => _login;
+  String? get login => _email;
+
+  String? _pseudo;
+
+  String? get pseudo => _pseudo;
 
   String? _password;
 
@@ -50,7 +55,8 @@ class AuthenticationManager {
   Future<void> _load() async {
     await _storageManager.open();
     _isLoggedIn = _storageManager.getBoolean(IS_LOGGED_IN) ?? false;
-    _login = _storageManager.getString(LOGIN);
+    _email = _storageManager.getString(EMAIL);
+    _pseudo = _storageManager.getString(PSEUDO);
     _password = await _storageManager.getSecureString(PASSWORD);
     _uid = _storageManager.getString(USER_ID);
     var tokenJson = _storageManager.getJson(TOKEN);
@@ -60,12 +66,10 @@ class AuthenticationManager {
   }
 
   Future<void> doLogin(
-      {required String login,
-      required String password,
-      Token? token,
-      required String userId}) async {
+      {required String login, required String password, String? pseudo, Token? token, required String userId}) async {
     _isLoggedIn = true;
-    _login = login;
+    _email = login;
+    _pseudo = pseudo;
     _password = password;
     _token = token;
     _uid = userId;
@@ -78,9 +82,13 @@ class AuthenticationManager {
   }
 
   Future<void> updateCredentials(
-      {String? login, String? password, Token? token, String? userId}) async {
-    if (login != null) {
-      _login = login;
+      {String? email, String? pseudo, String? password, Token? token, String? userId}) async {
+    if (email != null) {
+      _email = email;
+    }
+
+    if (pseudo != null) {
+      _pseudo = pseudo;
     }
 
     if (password != null) {
@@ -96,7 +104,8 @@ class AuthenticationManager {
 
   Future<void> doLogout() async {
     _isLoggedIn = false;
-    _login = null;
+    _email = null;
+    _pseudo = null;
     _password = null;
     _token = null;
     _uid = null;
@@ -105,7 +114,8 @@ class AuthenticationManager {
 
   Future<void> _save() async {
     await _storageManager.open();
-    await _storageManager.setString(LOGIN, _login);
+    await _storageManager.setSecureString(EMAIL, _email);
+    await _storageManager.setSecureString(PSEUDO, _pseudo);
     await _storageManager.setSecureString(PASSWORD, _password);
     await _storageManager.setBoolean(IS_LOGGED_IN, _isLoggedIn);
     await _storageManager.setString(USER_ID, _uid);
@@ -120,7 +130,8 @@ class AuthenticationManager {
   String toString() {
     String str = "AuthenticationManager{";
     str += "_isLoggedIn:" + _isLoggedIn.toString() + ", ";
-    str += "_login:" + (_login ?? "null") + ", ";
+    str += "_email:" + (_email ?? "null") + ", ";
+    str += "_pseudo:" + (_pseudo ?? "null") + ", ";
     str += "_token:" + (_token?.toShortString() ?? "null") + ", ";
     str += "_userId:" + (_uid ?? "null");
     str += "}";

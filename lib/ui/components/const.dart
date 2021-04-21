@@ -16,4 +16,5 @@ class AppDimensions {
 class AppColors {
   static const Color green = Color(0xFF4CAF50);
   static const Color grey = Color(0xFF9E9E9E);
+  static const Color blue = Colors.blue;
 }

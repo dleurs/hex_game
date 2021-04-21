@@ -21,14 +21,30 @@ class AuthenticationApiProvider {
 
   Future<User?> login({required String email, required String password}) async {
     try {
-      UserCredential userCredential = await dbAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential userCredential = await dbAuth.signInWithEmailAndPassword(email: email, password: password);
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+      } else if (e.code == 'too-many-requests') {
+        print("Too many request, retry later");
+      }
+    }
+  }
+
+  Future<User?> register({required String email, required String password}) async {
+    try {
+      UserCredential userCredential = await dbAuth.createUserWithEmailAndPassword(email: email, password: password);
+      return userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      } else if (e.code == 'too-many-requests') {
+        print("Too many request, retry later");
       }
     }
   }
@@ -38,29 +54,21 @@ class AuthenticationApiProvider {
   }
 
   Future<Player?> getPlayer({required String uid}) async {
-    DocumentSnapshot playerDoc =
-        await dbStore.collection(PlayerFireDtbPath.users).doc(uid).get();
+    DocumentSnapshot playerDoc = await dbStore.collection(PlayerFireDtbPath.users).doc(uid).get();
     print(playerDoc);
     return Player.fromFirebase(playerDoc); //TODO
   }
 
   Future<void> updatePlayer(
-      {required Player player,
-      required SaveFirestoreOperation operation,
-      bool merge = true}) async {
+      {required Player player, required SaveFirestoreOperation operation, bool merge = true}) async {
     return await dbStore.collection(PlayerFireDtbPath.users).doc(player.uid).set(
         player.toFirebase(operation: operation),
-        SetOptions(
-            merge:
-                merge)); // merge: true to keep dateRegisterAnonymous when converting anon to user
+        SetOptions(merge: merge)); // merge: true to keep dateRegisterAnonymous when converting anon to user
   }
 
   Future<bool> isPseudoAlreadyUsed({required String pseudo}) async {
-    List<DocumentSnapshot> listDocs = (await dbStore
-            .collection(PlayerFireDtbPath.users)
-            .where(Player.PSEUDO, isEqualTo: pseudo)
-            .get())
-        .docs;
+    List<DocumentSnapshot> listDocs =
+        (await dbStore.collection(PlayerFireDtbPath.users).where(Player.PSEUDO, isEqualTo: pseudo).get()).docs;
     return (listDocs.isNotEmpty);
   }
 
@@ -76,9 +84,7 @@ class AuthenticationApiProvider {
 
   Future<bool> isEmailAlreadyUsed({required String email}) async {
     try {
-      await dbAuth.signInWithEmailAndPassword(
-          email: email,
-          password: "ficjciqcjoj126129"); //TODO Use private variable
+      await dbAuth.signInWithEmailAndPassword(email: email, password: "ficjciqcjoj126129"); //TODO Use private variable
       return false;
     } on FirebaseAuthException catch (e) {
       print("isEmailAlreadyUsed FirebaseAuthException : " + e.toString());
@@ -90,24 +96,19 @@ class AuthenticationApiProvider {
   }
 
   Future<Player?> createUserWithPseudoEmailAndPassword(
-      {required String pseudo,
-      required String email,
-      required String password,
-      required BuildContext context}) async {
+      {required String pseudo, required String email, required String password, required BuildContext context}) async {
     bool pseudoAleadyUsed = await isPseudoAlreadyUsed(pseudo: pseudo);
     print(pseudoAleadyUsed);
     if (pseudoAleadyUsed) {
       throw PseudoAlredyUsedException();
     }
-    User? fireUser = (await dbAuth.createUserWithEmailAndPassword(
-            email: email, password: password))
-        .user; // also sign in
+    User? fireUser =
+        (await dbAuth.createUserWithEmailAndPassword(email: email, password: password)).user; // also sign in
     if (fireUser == null) {
       return null;
     }
     Player newPlayer = Player(uid: fireUser.uid, pseudo: pseudo, email: email);
-    await updatePlayer(
-        player: newPlayer, operation: SaveFirestoreOperation.emailRegister);
+    await updatePlayer(player: newPlayer, operation: SaveFirestoreOperation.emailRegister);
     return newPlayer;
   }
 }

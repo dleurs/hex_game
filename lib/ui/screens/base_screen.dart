@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_state.dart';
+import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
+import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 
 abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
@@ -16,49 +18,42 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @override
   void initState() {
     super.initState();
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: initState ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: initState ${this.toString()}");
   }
 
   @override
   void dispose() {
     super.dispose();
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: dispose ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: dispose ${this.toString()}");
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: reassemble ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: reassemble ${this.toString()}");
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: deactivate ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: deactivate ${this.toString()}");
   }
 
   @override
   void didUpdateWidget(T oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: didUpdateWidget ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: didUpdateWidget ${this.toString()}");
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: didChangeDependencies ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: didChangeDependencies ${this.toString()}");
   }
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "ScreenLifecycle: ${this.widget.toStringShort()}: build ${this.toString()}");
+    print("ScreenLifecycle: ${this.widget.toStringShort()}: build ${this.toString()}");
     return BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is LoggedOut) {
@@ -92,9 +87,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         },
         child: Text(
           S.of(context).hex_game_title,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: Theme.of(context).textTheme.headline6!.fontSize),
+          style: TextStyle(color: Colors.white, fontSize: Theme.of(context).textTheme.headline6!.fontSize),
         ),
       ),
       actions: [
@@ -172,6 +165,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   ///
   void onLoggedIn() {
     print("OnLoggedIn");
+    Beamer.of(context).beamToNamed(HomeScreen.uri.path);
   }
 
   void onWrongPassword() {
