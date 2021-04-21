@@ -41,7 +41,7 @@ class AuthenticationApiProvider {
     DocumentSnapshot playerDoc =
         await dbStore.collection(PlayerFireDtbPath.users).doc(uid).get();
     print(playerDoc);
-    return Player.fromFirebaseUser(playerDoc); //TODO
+    return Player.fromFirebase(playerDoc); //TODO
   }
 
   Future<void> updatePlayer(
@@ -58,7 +58,7 @@ class AuthenticationApiProvider {
   Future<bool> isPseudoAlreadyUsed({required String pseudo}) async {
     List<DocumentSnapshot> listDocs = (await dbStore
             .collection(PlayerFireDtbPath.users)
-            .where(Player.pseudoArg, isEqualTo: pseudo)
+            .where(Player.PSEUDO, isEqualTo: pseudo)
             .get())
         .docs;
     return (listDocs.isNotEmpty);

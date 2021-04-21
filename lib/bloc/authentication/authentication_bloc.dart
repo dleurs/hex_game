@@ -9,23 +9,20 @@ import 'package:tuple/tuple.dart';
 
 import './bloc.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthenticationApiProvider _provider;
 
   AuthenticationBloc(this._provider) : super(InitialAuthenticationState());
 
   @override
-  Stream<AuthenticationState> mapEventToState(
-      AuthenticationEvent event) async* {
+  Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
     yield AuthenticationProcessing();
 
     if (event is LoadLocalAuthenticationManager) {
-      if (AuthenticationManager.instance.isLoggedIn == null ||
-          AuthenticationManager.instance.isLoggedIn == false) {
+      if (AuthenticationManager.instance.isLoggedIn == null || AuthenticationManager.instance.isLoggedIn == false) {
         await AuthenticationManager.load();
       }
-      yield AuthenticationLocalLoaded();
+      yield AuthenticationSuccess();
     }
 
 /*     if (event is RegisterEvent) {
@@ -47,8 +44,7 @@ class AuthenticationBloc
 
     if (event is LoginEvent) {
       try {
-        User? user = await _provider.login(
-            email: event.login.toLowerCase(), password: event.password);
+        User? user = await _provider.login(email: event.login.toLowerCase(), password: event.password);
         await AuthenticationManager.instance.doLogin(
             login: event.login,
             password: event.password,

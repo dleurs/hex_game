@@ -17,13 +17,6 @@ class AuthenticationProcessing extends AuthenticationState {
   }
 }
 
-class AuthenticationLocalLoaded extends AuthenticationState {
-  @override
-  String toString() {
-    return 'AuthenticationLocalLoaded';
-  }
-}
-
 class AuthenticationSuccess extends AuthenticationState {
   @override
   String toString() {

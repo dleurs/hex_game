@@ -1,6 +1,6 @@
 # Firebase
 android/app/google-services.json
-web/firebase.js
+web/firebase_keys_offline.js
 
 
 # Miscellaneous

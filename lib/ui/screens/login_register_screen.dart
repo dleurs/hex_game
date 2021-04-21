@@ -1,17 +1,17 @@
 import 'package:beamer/beamer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_event.dart';
-import 'package:hex_game/core/firebase_user_storage.dart';
+import 'package:hex_game/bloc/authentication/authentication_state.dart';
+import 'package:hex_game/bloc/form_login_register/form_login_register_bloc.dart';
+import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
-import 'package:provider/provider.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
   static final BeamPage beamLocation = BeamPage(
@@ -21,12 +21,15 @@ class LoginRegisterScreen extends StatefulWidget {
   static final Uri uri = Uri(path: "/player");
 
   @override
-  _LoginRegisterScreenState createState() => _LoginRegisterScreenState();
+  _LoginRegisterScreenState createState() =>
+      _LoginRegisterScreenState(FormLoginRegisterBloc(AuthenticationApiProvider()));
 }
 
-enum LoginRegistersStep { enterEmail, login, register }
-
 class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
+  FormLoginRegisterBloc _blocForm;
+
+  _LoginRegisterScreenState(this._blocForm);
+
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _email = new TextEditingController();
@@ -35,19 +38,34 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
   bool _showPasswordEyeIcon = false;
   bool _passwordObscur = true;
-  LoginRegistersStep _step = LoginRegistersStep.enterEmail;
-  bool _wrongPassword = false;
-  bool _loading = false;
 
-  TextFormField email() {
+  @override
+  void dispose() {
+    _blocForm.close();
+    super.dispose();
+  }
+
+  Widget welcomeMessage() {
+    return Column(
+      children: [
+        Text(
+          "Welcome",
+          style: Theme.of(context).textTheme.headline4,
+        ), //TODO int
+      ],
+    );
+  }
+
+  Widget sizedBoxMedium() {
+    return SizedBox(
+      height: AppDimensions.mediumHeight,
+    );
+  }
+
+  TextFormField email({required bool readOnly}) {
     return TextFormField(
-      readOnly: (_step == LoginRegistersStep.login ||
-          _step == LoginRegistersStep.register),
-      style: TextStyle(
-          color: (_step == LoginRegistersStep.login ||
-                  _step == LoginRegistersStep.register)
-              ? Colors.grey[600]
-              : Colors.black),
+      readOnly: readOnly,
+      style: TextStyle(color: readOnly ? Colors.grey[600] : Colors.black),
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       controller: _email,
@@ -57,15 +75,14 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
           Icons.email,
           color: Colors.grey,
         ),
-        suffixIcon: (_step == LoginRegistersStep.login ||
-                _step == LoginRegistersStep.register)
+        suffixIcon: readOnly
             ? IconButton(
                 onPressed: () {
                   setState(() {
                     _email.text = "";
                     _password.text = "";
-                    _step = LoginRegistersStep.enterEmail;
                   });
+                  _blocForm.add(CheckEmailReset());
                 },
                 icon: Icon(Icons.cached_outlined))
             : null,
@@ -77,49 +94,45 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
-  Widget buttonValidateEmail(BuildContext context) {
+  Widget buttonValidateEmail({required BuildContext context, required bool loading}) {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: 120, height: 50),
       child: ElevatedButton(
-        child: !_loading
+        child: !loading
             ? Text(
                 'Enter', //TODO INTL
-                style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.headline6?.fontSize),
+                style: TextStyle(fontSize: Theme.of(context).textTheme.headline6?.fontSize),
               )
             : CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
         onPressed: () async {
           if (_formKey.currentState?.validate() ?? false) {
-            setState(() {
-              _loading = true;
-            });
             print("Checking if email " + _email.text + " is already used");
-            bool isEmailAlreadyUsed =
-                await FirestoreUserStorage.isEmailAlreadyUsed(
-                    email: _email.text);
-            print("isEmailAlreadyUsed : " + isEmailAlreadyUsed.toString());
-
-            setState(() {
-              (isEmailAlreadyUsed)
-                  ? _step = LoginRegistersStep.login
-                  : _step = LoginRegistersStep.register;
-              _loading = false;
-            });
+            _blocForm.add(CheckEmailEvent(email: _email.text));
+            //bool isEmailAlreadyUsed = await FirestoreUser.isEmailAlreadyUsed(email: _email.text);
           }
         },
       ),
     );
   }
 
+  Widget emailFoundOrNotMessage({required BuildContext context, required bool login0Register1}) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+      child: Text(
+        login0Register1 ? "TODO Email not found" : "TODO (Email found)", //TODO INTL,
+        style: TextStyle(
+          fontSize: Theme.of(context).textTheme.headline6?.fontSize,
+          color: AppColors.green,
+        ),
+      ),
+    );
+  }
+
   TextFormField pseudo() {
     return TextFormField(
-      readOnly: (_step == LoginRegistersStep.login),
-      style: TextStyle(
-          color: (_step == LoginRegistersStep.login)
-              ? Colors.grey[600]
-              : Colors.black),
+      style: TextStyle(color: Colors.black),
       keyboardType: TextInputType.text,
       autofocus: false,
       controller: _pseudo,
@@ -149,7 +162,6 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         //BlocProvider.of<AuthenticationBloc>(context).add(ResetEvent());
         setState(() {
           _showPasswordEyeIcon = true;
-          _wrongPassword = false;
         });
       },
       decoration: InputDecoration(
@@ -157,7 +169,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
           Icons.lock,
           color: Colors.grey,
         ), // icon is 48px widget.
-        errorText: (_wrongPassword) ? "Wrong password." : null,
+        //errorText: "Wrong password.",
 
         suffixIcon: _showPasswordEyeIcon
             ? IconButton(
@@ -171,26 +183,20 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.mediumHeight)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimensions.mediumHeight)),
       ),
     );
   }
 
-  Widget buttonValidateEmailPseudoPassword({required BuildContext context}) {
-    if (_step == LoginRegistersStep.enterEmail) {
-      return SizedBox();
-    }
+  Widget buttonValidateEmailPseudoPassword(
+      {required BuildContext context, required bool loading, required bool login0Register1}) {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: 120, height: 50),
       child: ElevatedButton(
-        child: !_loading
+        child: !loading
             ? Text(
-                _step == LoginRegistersStep.login
-                    ? 'Login'
-                    : 'Register', //TODO INTL
-                style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.headline6?.fontSize),
+                login0Register1 ? 'Register' : 'Login', //TODO INTL
+                style: TextStyle(fontSize: Theme.of(context).textTheme.headline6?.fontSize),
               )
             : CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -198,20 +204,20 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         onPressed: () async {
           if (_formKey.currentState?.validate() ?? false) {
             setState(() {
-              _loading = true;
+              loading = true;
             });
             try {
-              if (_step == LoginRegistersStep.register) {
-                Player? newPlayer = await FirestoreUserStorage
-                    .createUserWithPseudoEmailAndPassword(
+              if (login0Register1) {
+                BlocProvider.of<AuthenticationBloc>(context)
+                    .add(RegisterEvent(login: _email.text, password: _password.text));
+/*                     await FirestoreUser.createUserWithPseudoEmailAndPassword(
                         pseudo: _pseudo.text,
                         email: _email.text,
                         password: _password.text,
-                        context: context);
-                print("newPlayer : " + newPlayer.toString());
-              } else if (_step == LoginRegistersStep.login) {
-                BlocProvider.of<AuthenticationBloc>(context).add(
-                    LoginEvent(login: _email.text, password: _password.text));
+                        context: context); */
+              } else {
+                BlocProvider.of<AuthenticationBloc>(context)
+                    .add(LoginEvent(login: _email.text, password: _password.text));
 /*                 await FirebaseUser.signIn(
                     email: _email.text, password: _password.text); */
                 print("Player logged");
@@ -219,10 +225,6 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
             } catch (e) {
               print("Error : " + e.toString());
             }
-
-            setState(() {
-              _loading = false;
-            });
           }
         },
       ),
@@ -233,61 +235,56 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return Form(
       key: _formKey,
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
         child: Wrap(
           //mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
               child: ConstrainedBox(
-                constraints:
-                    BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
-                child: SingleChildScrollView(child: Column(
-                  children: toList(() sync* {
-                    yield SizedBox(height: AppDimensions.mediumHeight);
-                    yield email();
-                    if (_step == LoginRegistersStep.enterEmail) {
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                      yield buttonValidateEmail(context);
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                    } else if (_step == LoginRegistersStep.login) {
-                      yield Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                        child: Text(
-                          "TODO (Email found)", //TODO INTL,
-                          style: TextStyle(
-                            fontSize:
-                                Theme.of(context).textTheme.headline6?.fontSize,
-                            color: AppColors.green,
-                          ),
+                constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+                child: BlocBuilder<FormLoginRegisterBloc, FormLoginRegisterState>(
+                    bloc: _blocForm,
+                    builder: (context, blocState) {
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: toList(() sync* {
+                            yield sizedBoxMedium();
+                            yield welcomeMessage();
+                            yield sizedBoxMedium();
+                            yield email(readOnly: !(blocState is FormLoginRegisterInitial));
+                            yield sizedBoxMedium();
+                            if (blocState is FormLoginRegisterInitial) {
+                              yield buttonValidateEmail(context: context, loading: false);
+                            } else if (blocState is CheckEmailProcessing) {
+                              yield buttonValidateEmail(context: context, loading: true);
+                            }
+                            yield sizedBoxMedium();
+                            if (blocState is EmailDoesNotExist || blocState is EmailAlreadyExist) {
+                              // Register
+                              yield emailFoundOrNotMessage(
+                                  context: context, login0Register1: (blocState is EmailAlreadyExist));
+                              yield sizedBoxMedium();
+                            }
+                            if (blocState is EmailDoesNotExist) {
+                              // Register
+                              yield pseudo();
+                              yield sizedBoxMedium();
+                            }
+                            if (blocState is EmailDoesNotExist || blocState is EmailAlreadyExist) {
+                              // Register
+                              yield password(context);
+                              yield sizedBoxMedium();
+                              yield buttonValidateEmailPseudoPassword(
+                                  context: context,
+                                  loading: BlocProvider.of<AuthenticationBloc>(context) is AuthenticationProcessing,
+                                  login0Register1: blocState is EmailAlreadyExist);
+                            }
+                          }),
                         ),
                       );
-                    } else if (_step == LoginRegistersStep.register) {
-                      yield Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                        child: Text(
-                          "TODO New email", //TODO INTL,
-                          style: TextStyle(
-                            fontSize:
-                                Theme.of(context).textTheme.headline6?.fontSize,
-                            color: AppColors.grey,
-                          ),
-                        ), //TODO INTL,
-                      );
-                      yield pseudo();
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                    }
-                    //yield CircularProgressIndicator();
-                    if (_step == LoginRegistersStep.login ||
-                        _step == LoginRegistersStep.register) {
-                      yield password(context);
-                      yield SizedBox(height: AppDimensions.mediumHeight);
-                      yield buttonValidateEmailPseudoPassword(context: context);
-                    }
-                  }),
-                )),
+                    }),
               ),
-            ),
+            )
           ],
         ),
       ),
