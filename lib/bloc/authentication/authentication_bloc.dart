@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/models/player.dart';
+import 'package:hex_game/utils/exceptions.dart';
 
 import './bloc.dart';
 
@@ -38,6 +40,10 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     }
     if (event is RegisterEvent) {
       try {
+        bool pseudoAlreadyUsed = await _provider.isPseudoAlreadyUsed(pseudo: event.pseudo);
+        if (pseudoAlreadyUsed) {
+          throw PseudoAlredyUsedException();
+        }
         User? user = await _provider.register(email: event.email.toLowerCase(), password: event.password);
         user!;
         await AuthenticationManager.instance.doLogin(
@@ -49,8 +55,22 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         Player player = Player(uid: user.uid, pseudo: event.pseudo);
         await _provider.updatePlayer(player: player, operation: SaveFirestoreOperation.emailRegister);
         yield AuthenticationSuccess();
+      } on FirebaseAuthException catch (e) {
+        if (e.code == "email-already-in-use") {
+          yield RegisterErrorEmailAlreadyUsed();
+        } else if (e.code == "invalid-email") {
+          yield RegisterErrorInvalidEmail();
+        } else if (e.code == "operation-not-allowed") {
+          yield RegisterErrorOperationNotAllowed();
+        } else {
+          yield RegisterError(error: e.toString());
+        }
       } catch (e) {
-        yield AuthenticationError(error: 'Login failed');
+        if (e is PseudoAlredyUsedException) {
+          yield RegisterErrorPseudoAlreadyUsed();
+        } else {
+          yield RegisterErrorFirestore(error: e.toString());
+        }
       }
     }
 

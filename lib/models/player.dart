@@ -24,17 +24,6 @@ class Player extends ChangeNotifier {
     return (uid != null);
   }
 
-  void updateFirebase(User? firebaseUser) async {
-    if (firebaseUser == null) {
-      return;
-    }
-    Player? updatedPlayer = await AuthenticationApiProvider().getPlayer(uid: firebaseUser.uid);
-    if (updatedPlayer == null) {
-      return null;
-    }
-    update(updatedPlayer);
-  }
-
   void update(Player updatedPlayer) {
     uid = updatedPlayer.uid;
     isAnonymous = updatedPlayer.isAnonymous;

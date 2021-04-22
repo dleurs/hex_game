@@ -90,7 +90,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
             this.onLoggedIn();
           } else if (state is SyncSuccessRefresh) {
             this.onRefresh();
-          } else if (state is WrongPassword) {
+          } else if (state is LoggingErrorWrongPassword) {
             this.onWrongPassword();
           }
         },
@@ -193,8 +193,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   }
 
   void onRefresh() {
-    print("OnSync");
-    //Beamer.of(context).beamTo(context.currentBeamLocation);
+    print("OnRefresh");
     setState(() {});
     //Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
   }

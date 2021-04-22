@@ -10,42 +10,18 @@ class AuthenticationApiProvider {
   var dbStore = FirebaseFirestore.instance;
 
   Future<String?> loginAnonymously({required BuildContext context}) async {
-    try {
-      UserCredential userCredential = await dbAuth.signInAnonymously();
-      return userCredential.user?.uid ?? null;
-    } catch (e) {
-      print("Error: " + e.toString());
-    }
+    UserCredential userCredential = await dbAuth.signInAnonymously();
+    return userCredential.user?.uid ?? null;
   }
 
   Future<User?> login({required String email, required String password}) async {
-    try {
-      UserCredential userCredential = await dbAuth.signInWithEmailAndPassword(email: email, password: password);
-      return userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      } else if (e.code == 'too-many-requests') {
-        print("Too many request, retry later");
-      }
-    }
+    UserCredential userCredential = await dbAuth.signInWithEmailAndPassword(email: email, password: password);
+    return userCredential.user;
   }
 
   Future<User?> register({required String email, required String password}) async {
-    try {
-      UserCredential userCredential = await dbAuth.createUserWithEmailAndPassword(email: email, password: password);
-      return userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      } else if (e.code == 'too-many-requests') {
-        print("Too many request, retry later");
-      }
-    }
+    UserCredential userCredential = await dbAuth.createUserWithEmailAndPassword(email: email, password: password);
+    return userCredential.user;
   }
 
   Future<void> logout() async {
