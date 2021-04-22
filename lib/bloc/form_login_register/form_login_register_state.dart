@@ -14,7 +14,7 @@ class FormLoginRegisterInitial extends FormLoginRegisterState {
   }
 }
 
-class CheckEmailProcessing extends FormLoginRegisterState {
+class EmailCheckProcessing extends FormLoginRegisterState {
   @override
   String toString() {
     return 'CheckEmailProcessing';

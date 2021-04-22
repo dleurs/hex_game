@@ -10,14 +10,15 @@ part 'form_login_register_state.dart';
 
 class FormLoginRegisterBloc extends Bloc<FormLoginRegisterEvent, FormLoginRegisterState> {
   final AuthenticationApiProvider _provider;
-  FormLoginRegisterBloc(this._provider) : super(FormLoginRegisterInitial());
+  String email;
+  FormLoginRegisterBloc(this._provider, {this.email = ""}) : super(FormLoginRegisterInitial());
 
   @override
   Stream<FormLoginRegisterState> mapEventToState(
     FormLoginRegisterEvent event,
   ) async* {
     if (event is CheckEmailEvent) {
-      yield CheckEmailProcessing();
+      yield EmailCheckProcessing();
       try {
         FirebaseAuthException isEmailExist = await _provider.isEmailAlreadyUsed(email: event.email);
         if (isEmailExist.code == "wrong-password") {
@@ -34,7 +35,7 @@ class FormLoginRegisterBloc extends Bloc<FormLoginRegisterEvent, FormLoginRegist
         yield CheckEmailError();
       }
     }
-    if (event is CheckEmailReset) {
+    if (event is CheckEmailResetEvent) {
       yield FormLoginRegisterInitial();
     }
   }

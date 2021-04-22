@@ -11,6 +11,8 @@ import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
+import 'bloc/form_login_register/form_login_register_bloc.dart';
+
 Future<void> main() async {
   setPathUrlStrategy(); // Remove the "#" from the url
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +36,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
-          //BlocProvider<FormLoginRegisterBloc, FormLoginRegisterState>(
-          //  create: (context) => _blocForm,
+          BlocProvider<FormLoginRegisterBloc>(create: (context) => FormLoginRegisterBloc(AuthenticationApiProvider())),
         ],
         child: MaterialApp.router(
           title: "Hex Game",

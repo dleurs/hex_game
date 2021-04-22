@@ -20,14 +20,11 @@ class LoginRegisterScreen extends StatefulWidget {
   static final Uri uri = Uri(path: "/player");
 
   @override
-  _LoginRegisterScreenState createState() =>
-      _LoginRegisterScreenState(FormLoginRegisterBloc(AuthenticationApiProvider()));
+  _LoginRegisterScreenState createState() => _LoginRegisterScreenState();
 }
 
 class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
-  FormLoginRegisterBloc _blocForm;
-
-  _LoginRegisterScreenState(this._blocForm);
+  _LoginRegisterScreenState();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -44,17 +41,23 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
   @override
   void dispose() {
-    _blocForm.close();
     super.dispose();
+  }
+
+  bool doIShowEmailValidationButton(FormLoginRegisterState state) {
+    return (state is FormLoginRegisterInitial ||
+        state is EmailInvalid ||
+        state is EmailUserDisabled ||
+        state is EmailCheckProcessing);
   }
 
   Widget welcomeMessage() {
     return Column(
       children: [
         Text(
-          "Welcome",
+          "Welcome", //TODO intl
           style: Theme.of(context).textTheme.headline4,
-        ), //TODO intl
+        ),
       ],
     );
   }
@@ -71,7 +74,8 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
-  TextFormField email({required bool readOnly}) {
+  TextFormField email() {
+    var readOnly = (!doIShowEmailValidationButton(BlocProvider.of<FormLoginRegisterBloc>(context).state));
     return TextFormField(
       readOnly: readOnly,
       style: TextStyle(color: readOnly ? Colors.grey[600] : Colors.black),
@@ -107,7 +111,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                     _email.text = "";
                     _password.text = "";
                   });
-                  _blocForm.add(CheckEmailReset());
+                  BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailResetEvent());
                 },
                 icon: Icon(Icons.cached_outlined))
             : null,
@@ -116,6 +120,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
       onChanged: (String email) {
+        //BlocProvider.of<FormLoginRegisterBloc>(context, listen: false).add(WritingEmailEvent(email: email));
         setState(() {
           _emailNameError = false;
           _emailNameErrorText = null;
@@ -130,11 +135,11 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
-  Widget buttonValidateEmail({required BuildContext context, required bool loading}) {
+  Widget buttonValidateEmail({required BuildContext context}) {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: 120, height: 50),
       child: ElevatedButton(
-        child: !loading
+        child: !(BlocProvider.of<FormLoginRegisterBloc>(context).state is EmailCheckProcessing)
             ? Text(
                 'Enter', //TODO INTL
                 style: TextStyle(fontSize: Theme.of(context).textTheme.headline6?.fontSize),
@@ -146,7 +151,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
           if (_formKey.currentState?.validate() ?? false) {
             if (!_emailNameError) {
               print("Checking if email " + _email.text + " is already used");
-              _blocForm.add(CheckEmailEvent(email: _email.text));
+              BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailEvent(email: _email.text));
             }
             //bool isEmailAlreadyUsed = await FirestoreUser.isEmailAlreadyUsed(email: _email.text);
           }
@@ -194,7 +199,6 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         return FormValidators.validatePassword(password);
       },
       onChanged: (String password) {
-        //BlocProvider.of<AuthenticationBloc>(context).add(ResetEvent());
         setState(() {
           _showPasswordEyeIcon = true;
         });
@@ -203,9 +207,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         prefixIcon: Icon(
           Icons.lock,
           color: Colors.grey,
-        ), // icon is 48px widget.
-        //errorText: "Wrong password.",
-
+        ),
         suffixIcon: _showPasswordEyeIcon
             ? IconButton(
                 onPressed: () {
@@ -214,9 +216,8 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                   });
                 },
                 icon: Icon(Icons.remove_red_eye_outlined))
-            : SizedBox(), // icon is 48px widget.
-
-        hintText: 'Password',
+            : SizedBox(),
+        hintText: 'Password', //TODO INTL
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimensions.mediumHeight)),
       ),
@@ -260,69 +261,68 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
   }
 
   Widget formLoginRegisterPlayer() {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
-        child: Wrap(
-          children: [
-            Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
-                child: BlocBuilder<FormLoginRegisterBloc, FormLoginRegisterState>(
-                    bloc: _blocForm,
-                    builder: (context, blocState) {
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: toList(() sync* {
-                            yield sizedBoxMedium();
-                            yield welcomeMessage();
-                            yield sizedBoxMedium();
-                            yield email(readOnly: !(blocState is FormLoginRegisterInitial));
+    return BlocListener<FormLoginRegisterBloc, FormLoginRegisterState>(
+      listener: (context, state) {
+        if (state is EmailInvalid) {
+          setState(() {
+            _emailNameError = true;
+            _emailNameErrorText = 'Please enter a valid email address.'; // TODO INTL
+          });
+        } else if (state is EmailUserDisabled) {
+          setState(() {
+            _emailNameError = true;
+            _emailNameErrorText = 'User link with this email disabled by administrator.'; // TODO INTL
+          });
+        }
+      },
+      child: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
+          child: Wrap(
+            children: [
+              Center(
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: toList(() sync* {
+                          var formState = BlocProvider.of<FormLoginRegisterBloc>(context).state;
+                          yield sizedBoxMedium();
+                          yield welcomeMessage();
+                          yield sizedBoxMedium();
+                          yield email();
+                          yield sizedBoxSmall();
+                          if (doIShowEmailValidationButton(formState)) {
+                            yield buttonValidateEmail(context: context);
+                          }
+                          if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
+                            // Register
+                            yield emailFoundOrNotMessage(
+                                context: context, login0Register1: (formState is EmailDoesNotExist));
                             yield sizedBoxSmall();
-                            if (blocState is FormLoginRegisterInitial) {
-                              yield buttonValidateEmail(context: context, loading: false);
-                            } else if (blocState is CheckEmailProcessing) {
-                              yield buttonValidateEmail(context: context, loading: true);
-                            }
-                            if (blocState is EmailDoesNotExist || blocState is EmailAlreadyExist) {
-                              // Register
-                              yield emailFoundOrNotMessage(
-                                  context: context, login0Register1: (blocState is EmailDoesNotExist));
-                              yield sizedBoxSmall();
-                            }
-/*                             if (blocState is EmailInvalid) {
-                              setState(() {
-                                _emailNameError = true;
-                                _emailNameErrorText = 'Please enter a valid email address.'; // TODO INTL
-                              });
-                            } else if (blocState is EmailUserDisabled) {
-                              setState(() {
-                                _emailNameError = true;
-                                _emailNameErrorText = 'User link with this email disabled.'; // TODO INTL
-                              });
-                            } */
-                            if (blocState is EmailDoesNotExist) {
-                              // Register
-                              yield pseudo();
-                              yield sizedBoxMedium();
-                            }
-                            if (blocState is EmailDoesNotExist || blocState is EmailAlreadyExist) {
-                              // Register
-                              yield password(context);
-                              yield sizedBoxMedium();
-                              yield buttonValidateEmailPseudoPassword(
-                                  context: context,
-                                  loading: BlocProvider.of<AuthenticationBloc>(context) is AuthenticationProcessing,
-                                  login0Register1: blocState is EmailDoesNotExist);
-                            }
-                          }),
-                        ),
-                      );
-                    }),
+                          }
+
+                          if (formState is EmailDoesNotExist) {
+                            // Register
+                            yield pseudo();
+                            yield sizedBoxMedium();
+                          }
+                          if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
+                            // Register
+                            yield password(context);
+                            yield sizedBoxMedium();
+                            yield buttonValidateEmailPseudoPassword(
+                                context: context,
+                                loading: formState is AuthenticationProcessing,
+                                login0Register1: formState is EmailDoesNotExist);
+                          }
+                        }),
+                      ),
+                    )),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

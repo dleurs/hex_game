@@ -16,7 +16,7 @@ class CheckEmailEvent extends FormLoginRegisterEvent {
   List<Object> get props => [email];
 }
 
-class CheckEmailReset extends FormLoginRegisterEvent {
+class CheckEmailResetEvent extends FormLoginRegisterEvent {
   @override
   List<Object> get props => [];
 }
