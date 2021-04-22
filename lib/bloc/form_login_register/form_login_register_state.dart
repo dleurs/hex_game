@@ -31,7 +31,7 @@ class EmailAlreadyExist extends FormLoginRegisterState {
 class EmailDoesNotExist extends FormLoginRegisterState {
   @override
   String toString() {
-    return 'CheckEmailDoesNotExist';
+    return 'EmailDoesNotExist';
   }
 }
 

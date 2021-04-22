@@ -140,13 +140,13 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: 120, height: 50),
       child: ElevatedButton(
-        child: !(BlocProvider.of<FormLoginRegisterBloc>(context).state is EmailCheckProcessing)
-            ? Text(
+        child: (BlocProvider.of<FormLoginRegisterBloc>(context).state is EmailCheckProcessing)
+            ? CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              )
+            : Text(
                 'Enter', //TODO INTL
                 style: TextStyle(fontSize: Theme.of(context).textTheme.headline6?.fontSize),
-              )
-            : CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
         onPressed: () async {
           if (_formKey.currentState?.validate() ?? false) {
@@ -294,7 +294,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                           yield sizedBoxMedium();
                           yield email();
                           yield sizedBoxSmall();
-                          if (doIShowEmailValidationButton(formState)) {
+                          if (doIShowEmailValidationButton(BlocProvider.of<FormLoginRegisterBloc>(context).state)) {
                             yield buttonValidateEmail(context: context);
                           }
                           if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
