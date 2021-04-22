@@ -27,6 +27,8 @@ class FormLoginRegisterBloc extends Bloc<FormLoginRegisterEvent, FormLoginRegist
           yield EmailDoesNotExist();
         } else if (isEmailExist.code == "user-disabled") {
           yield EmailUserDisabled();
+        } else if (isEmailExist.code == "too-many-requests") {
+          yield EmailTooManyRequest();
         } else {
           // isEmailExist.code == "invalid-email" or users used the password in the code
           yield EmailInvalid();

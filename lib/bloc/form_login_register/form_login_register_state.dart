@@ -49,6 +49,13 @@ class EmailUserDisabled extends FormLoginRegisterState {
   }
 }
 
+class EmailTooManyRequest extends FormLoginRegisterState {
+  @override
+  String toString() {
+    return 'EmailTooManyRequest';
+  }
+}
+
 class CheckEmailError extends FormLoginRegisterState {
   final String? error;
 
