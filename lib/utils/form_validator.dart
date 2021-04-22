@@ -1,7 +1,6 @@
 class FormValidators {
-  static const String PSEUDO_PATTERN = r'^([\u0400-\u04FFa-zA-Z0-9]{3,25})$';
-  static const String EMAIL_PATTERN =
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
+  static const String PSEUDO_PATTERN = r'^.{2,20}$';
+  static const String EMAIL_PATTERN = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
   static const String PASSWORD_PATTERN = r'^.{6,}$';
 
   static bool isPlayerIdValid(String? value) {

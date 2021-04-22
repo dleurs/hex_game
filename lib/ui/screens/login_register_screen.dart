@@ -182,19 +182,45 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return TextFormField(
       style: TextStyle(color: Colors.black),
       keyboardType: TextInputType.text,
-      autofocus: false,
+      focusNode: _pseudoFocusNode,
       controller: _pseudo,
-      validator: FormValidators.validatePseudo,
+      validator: (value) {
+        setState(() {
+          if (value != null && value.isEmpty) {
+            _pseudoNameError = true;
+            _pseudoNameErrorText = 'Please enter a valid pseudo.'; // TODO INTL
+          }
+          RegExp regex = new RegExp(FormValidators.PSEUDO_PATTERN);
+          if (value != null && !regex.hasMatch(value)) {
+            _pseudoNameError = true;
+            _pseudoNameErrorText = 'Pseudo should be between 2 and 20'; // TODO INTL
+          }
+        });
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           FlutterIconCom.user,
           color: Colors.grey,
         ),
         hintText: 'Pseudo', //TODO INTL
+        labelText: 'Pseudo', // TODO INTL
+        labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
+        errorText: _pseudoNameErrorText,
         contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
-      onChanged: (String email) {},
+      onChanged: (String pseudo) {
+        setState(() {
+          _pseudoNameError = false;
+          _pseudoNameErrorText = null;
+        });
+      },
+      onFieldSubmitted: (value) {
+        if (!_pseudoNameError) {
+          FocusScope.of(context).requestFocus(_pseudoFocusNode);
+        }
+      },
     );
   }
 
