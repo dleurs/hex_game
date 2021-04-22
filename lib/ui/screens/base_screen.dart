@@ -79,27 +79,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     );
   }
 
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
-        false;
-  }
-
   @override
   Widget build(BuildContext context) {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: build ${this.toString()}");
@@ -109,27 +88,24 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
             this.onLoggedOut();
           } else if (state is AuthenticationSuccess) {
             this.onLoggedIn();
-          } else if (state is SyncSuccess) {
-            this.onSync();
+          } else if (state is SyncSuccessRefresh) {
+            this.onRefresh();
           } else if (state is WrongPassword) {
             this.onWrongPassword();
           }
         },
-        child: WillPopScope(
-          onWillPop: _onWillPop,
-          child: Scaffold(
-            //backgroundColor: this.backgroundColor,
-            appBar: this.buildAppBar(context),
-            body: (BlocProvider.of<AuthenticationBloc>(context).state is InitialAuthenticationState)
-                ? FutureBuilder<bool>(
-                    future: AuthenticationManager.load(),
-                    builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
-                      return loadUserAndSyncFirebaseAuth(context, snapshotAuthManagerLoad);
-                    })
-                : this.buildScreen(context),
-            bottomNavigationBar: this.buildBottomNavigationBar(context),
-            floatingActionButton: this.buildFloatingActionButton(context),
-          ),
+        child: Scaffold(
+          //backgroundColor: this.backgroundColor,
+          appBar: this.buildAppBar(context),
+          body: (BlocProvider.of<AuthenticationBloc>(context).state is InitialAuthenticationState)
+              ? FutureBuilder<bool>(
+                  future: AuthenticationManager.load(),
+                  builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
+                    return loadUserAndSyncFirebaseAuth(context, snapshotAuthManagerLoad);
+                  })
+              : this.buildScreen(context),
+          bottomNavigationBar: this.buildBottomNavigationBar(context),
+          floatingActionButton: this.buildFloatingActionButton(context),
         ));
   }
 
@@ -216,7 +192,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     //BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
   }
 
-  void onSync() {
+  void onRefresh() {
     print("OnSync");
     //Beamer.of(context).beamTo(context.currentBeamLocation);
     setState(() {});

@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
+          //BlocProvider<FormLoginRegisterBloc, FormLoginRegisterState>(
+          //  create: (context) => _blocForm,
         ],
         child: MaterialApp.router(
           title: "Hex Game",

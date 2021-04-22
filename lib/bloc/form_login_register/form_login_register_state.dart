@@ -35,6 +35,20 @@ class EmailDoesNotExist extends FormLoginRegisterState {
   }
 }
 
+class EmailInvalid extends FormLoginRegisterState {
+  @override
+  String toString() {
+    return 'EmailInvalid';
+  }
+}
+
+class EmailUserDisabled extends FormLoginRegisterState {
+  @override
+  String toString() {
+    return 'EmailUserDisabled';
+  }
+}
+
 class CheckEmailError extends FormLoginRegisterState {
   final String? error;
 

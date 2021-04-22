@@ -81,16 +81,13 @@ class AuthenticationApiProvider {
     return (listDocs.isNotEmpty);
   } */
 
-  Future<bool> isEmailAlreadyUsed({required String email}) async {
+  Future<FirebaseAuthException> isEmailAlreadyUsed({required String email}) async {
     try {
       await dbAuth.signInWithEmailAndPassword(email: email, password: "ficjciqcjoj126129"); //TODO Use private variable
-      return false;
+      return FirebaseAuthException(code: "user-read-password");
     } on FirebaseAuthException catch (e) {
       print("isEmailAlreadyUsed FirebaseAuthException : " + e.toString());
-      if (e.code == 'wrong-password') {
-        return true;
-      }
-      return false;
+      return e;
     }
   }
 

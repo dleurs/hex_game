@@ -31,12 +31,16 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _email = new TextEditingController();
   TextEditingController _pseudo = new TextEditingController();
   TextEditingController _password = new TextEditingController();
 
   bool _showPasswordEyeIcon = false;
   bool _passwordObscur = true;
+
+  TextEditingController _email = new TextEditingController();
+  final _emailFocusNode = FocusNode();
+  String? _emailNameErrorText;
+  bool _emailNameError = false;
 
   @override
   void dispose() {
@@ -50,7 +54,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         Text(
           "Welcome",
           style: Theme.of(context).textTheme.headline4,
-        ), //TODO int
+        ), //TODO intl
       ],
     );
   }
@@ -72,14 +76,30 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
       readOnly: readOnly,
       style: TextStyle(color: readOnly ? Colors.grey[600] : Colors.black),
       keyboardType: TextInputType.emailAddress,
-      autofocus: false,
+      focusNode: _emailFocusNode,
       controller: _email,
-      validator: FormValidators.validateEmail,
+      validator: (String? value) {
+        setState(() {
+          if (value != null && value.isEmpty) {
+            _emailNameError = true;
+            _emailNameErrorText = 'Email required.'; // TODO INTL
+          }
+          RegExp regex = new RegExp(FormValidators.EMAIL_PATTERN);
+          if (value != null && !regex.hasMatch(value)) {
+            _emailNameError = true;
+            _emailNameErrorText = 'Please enter a valid email address.'; // TODO INTL
+          }
+        });
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.email,
           color: Colors.grey,
         ),
+        labelText: 'Email', // TODO INTL
+        labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
+        errorText: _emailNameErrorText,
         suffixIcon: readOnly
             ? IconButton(
                 onPressed: () {
@@ -95,7 +115,18 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
-      onChanged: (String email) {},
+      onChanged: (String email) {
+        setState(() {
+          _emailNameError = false;
+          _emailNameErrorText = null;
+        });
+      },
+      onFieldSubmitted: (value) {
+        _formKey.currentState!.validate(); // Trigger validation
+        if (!_emailNameError) {
+          FocusScope.of(context).requestFocus(_emailFocusNode);
+        }
+      },
     );
   }
 
@@ -113,8 +144,10 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
               ),
         onPressed: () async {
           if (_formKey.currentState?.validate() ?? false) {
-            print("Checking if email " + _email.text + " is already used");
-            _blocForm.add(CheckEmailEvent(email: _email.text));
+            if (!_emailNameError) {
+              print("Checking if email " + _email.text + " is already used");
+              _blocForm.add(CheckEmailEvent(email: _email.text));
+            }
             //bool isEmailAlreadyUsed = await FirestoreUser.isEmailAlreadyUsed(email: _email.text);
           }
         },
@@ -232,7 +265,6 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
         child: Wrap(
-          //mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
               child: ConstrainedBox(
@@ -259,6 +291,17 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                                   context: context, login0Register1: (blocState is EmailDoesNotExist));
                               yield sizedBoxSmall();
                             }
+/*                             if (blocState is EmailInvalid) {
+                              setState(() {
+                                _emailNameError = true;
+                                _emailNameErrorText = 'Please enter a valid email address.'; // TODO INTL
+                              });
+                            } else if (blocState is EmailUserDisabled) {
+                              setState(() {
+                                _emailNameError = true;
+                                _emailNameErrorText = 'User link with this email disabled.'; // TODO INTL
+                              });
+                            } */
                             if (blocState is EmailDoesNotExist) {
                               // Register
                               yield pseudo();
@@ -278,7 +321,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                       );
                     }),
               ),
-            )
+            ),
           ],
         ),
       ),

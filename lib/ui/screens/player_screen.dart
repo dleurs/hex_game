@@ -36,15 +36,16 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
   @override
   Widget? buildLeading(BuildContext context) {
     if (AuthenticationManager.instance.isLoggedIn) {
-      return IconButton(
-          icon: Icon(
-            Icons.chevron_left_sharp,
-            size: AppDimensions.backIconSize,
-          ),
-          onPressed: () {
+      return BackButton(
+        onPressed: () {
+          if (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
+          }
+          if (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
-          });
+          }
+        },
+      );
     } else {
       return null;
     }

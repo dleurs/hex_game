@@ -13,6 +13,8 @@ class AppDimensions {
   static const double mediumScreenSize = 960.0;
   static const double largeScreenSize = 1280.0;
   static const double xLargeScreenSize = 1920.0;
+
+  static const double xSmallTextSize = 18.0;
 }
 
 class AppColors {

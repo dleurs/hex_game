@@ -24,7 +24,14 @@ class AuthenticationSuccess extends AuthenticationState {
   }
 }
 
-class SyncSuccess extends AuthenticationState {
+class SyncSuccessRefresh extends AuthenticationState {
+  @override
+  String toString() {
+    return 'SyncSuccessState';
+  }
+}
+
+class RefreshScreen extends AuthenticationState {
   @override
   String toString() {
     return 'SyncSuccessState';
