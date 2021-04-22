@@ -89,8 +89,7 @@ class AuthenticationManager {
     await _save();
   }
 
-  Future<void> updateCredentials(
-      {bool? isLoggedIn, String? email, String? pseudo, String? password, Token? token, String? uid}) async {
+  Future<void> updateCredentials({String? email, String? pseudo, String? password, Token? token, String? uid}) async {
     if (uid != null) {
       _uid = uid;
     }

@@ -54,7 +54,51 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: didChangeDependencies ${this.toString()}");
   }
 
-  //late bool appAlreadyOpenned;
+  Widget loadUserAndSyncFirebaseAuth(BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
+    if (!snapshotAuthManagerLoad.hasData) {
+      return SplashScreen(message: "Load Authentication");
+    }
+    return FutureBuilder<bool>(
+      future: AuthenticationManager.instance.userAlreadyOpenApp(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshotUserAlreadyUsed) {
+        if (snapshotUserAlreadyUsed.hasData) {
+          bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
+          BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
+          if (userAlreadyOpenApp == false) {
+            print("snapshot.hasData : First time opening the app");
+            return SplashScreen();
+          } else {
+            return buildScreen(context);
+          }
+        } else if (snapshotUserAlreadyUsed.hasData) {
+          return SplashScreen(message: "Error userAlreadyOpenApp " + snapshotUserAlreadyUsed.error.toString());
+        } else {
+          return SplashScreen();
+        }
+      },
+    );
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit an App'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,44 +115,29 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
             this.onWrongPassword();
           }
         },
-        child: Scaffold(
-          //backgroundColor: this.backgroundColor,
-          appBar: this.buildAppBar(context),
-          body: (BlocProvider.of<AuthenticationBloc>(context).state is InitialAuthenticationState)
-              ? FutureBuilder<bool>(
-                  future: AuthenticationManager.load(),
-                  builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
-                    if (!snapshotAuthManagerLoad.hasData) {
-                      return SplashScreen(message: "Load Authentication");
-                    }
-                    return FutureBuilder<bool>(
-                      future: AuthenticationManager.instance.userAlreadyOpenApp(),
-                      builder: (BuildContext context, AsyncSnapshot<bool> snapshotUserAlreadyUsed) {
-                        if (snapshotUserAlreadyUsed.hasData) {
-                          bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
-                          if (userAlreadyOpenApp == false) {
-                            print("snapshot.hasData : First time opening the app");
-                            BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
-                            return SplashScreen();
-                          } else {
-                            return this.buildScreen(context);
-                          }
-                        } else if (snapshotUserAlreadyUsed.hasData) {
-                          return SplashScreen(
-                              message: "Error userAlreadyOpenApp " + snapshotUserAlreadyUsed.error.toString());
-                        } else {
-                          return SplashScreen();
-                        }
-                      },
-                    );
-                  })
-              : this.buildScreen(context),
-          bottomNavigationBar: this.buildBottomNavigationBar(context),
-          floatingActionButton: this.buildFloatingActionButton(context),
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            //backgroundColor: this.backgroundColor,
+            appBar: this.buildAppBar(context),
+            body: (BlocProvider.of<AuthenticationBloc>(context).state is InitialAuthenticationState)
+                ? FutureBuilder<bool>(
+                    future: AuthenticationManager.load(),
+                    builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
+                      return loadUserAndSyncFirebaseAuth(context, snapshotAuthManagerLoad);
+                    })
+                : this.buildScreen(context),
+            bottomNavigationBar: this.buildBottomNavigationBar(context),
+            floatingActionButton: this.buildFloatingActionButton(context),
+          ),
         ));
   }
 
   Widget buildScreen(BuildContext context);
+
+  Widget? buildLeading(BuildContext context) {
+    return null;
+  }
 
   ///
   /// Implement this to build an [AppBar] for all screens
@@ -125,6 +154,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
           style: TextStyle(color: Colors.white, fontSize: Theme.of(context).textTheme.headline6!.fontSize),
         ),
       ),
+      leading: buildLeading(context),
       actions: [
         IconButton(
           icon: Icon(FlutterIconCom.group),

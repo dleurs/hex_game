@@ -23,14 +23,12 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         User? user = _provider.dbAuth.currentUser;
         if (user == null || user.uid.isEmpty) {
           await AuthenticationManager.instance.doLogout();
+        } else {
+          AuthenticationManager.instance.updateCredentials(email: user.email, uid: user.uid);
         }
-        if (AuthenticationManager.instance.uid == null && user != null && user.uid.isNotEmpty) {
-          String? pseudo;
-          if (user.email != null) {
-            Player? player = await _provider.getPlayer(uid: user.uid);
-            pseudo = player!.pseudo;
-          }
-          AuthenticationManager.instance.updateCredentials(email: user.email, pseudo: pseudo, uid: user.uid);
+        if (AuthenticationManager.instance.pseudo == null && user != null && user.uid.isNotEmpty) {
+          Player? player = await _provider.getPlayer(uid: user.uid);
+          AuthenticationManager.instance.updateCredentials(pseudo: player!.pseudo);
         }
       } catch (e) {}
       yield SyncSuccess();
