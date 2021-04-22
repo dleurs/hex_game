@@ -20,3 +20,12 @@ class CheckEmailResetEvent extends FormLoginRegisterEvent {
   @override
   List<Object> get props => [];
 }
+
+class WritingEmailEvent extends FormLoginRegisterEvent {
+  final String email;
+
+  WritingEmailEvent({required this.email});
+
+  @override
+  List<Object> get props => [email];
+}

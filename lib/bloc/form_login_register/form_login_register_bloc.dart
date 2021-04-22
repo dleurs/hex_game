@@ -38,5 +38,8 @@ class FormLoginRegisterBloc extends Bloc<FormLoginRegisterEvent, FormLoginRegist
     if (event is CheckEmailResetEvent) {
       yield FormLoginRegisterInitial();
     }
+    if (event is WritingEmailEvent) {
+      email = event.email;
+    }
   }
 }

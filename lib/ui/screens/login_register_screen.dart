@@ -40,8 +40,9 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
   bool _emailNameError = false;
 
   @override
-  void dispose() {
-    super.dispose();
+  void initState() {
+    super.initState();
+    _email.text = BlocProvider.of<FormLoginRegisterBloc>(context).email;
   }
 
   bool doIShowEmailValidationButton(FormLoginRegisterState state) {
@@ -120,7 +121,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
       onChanged: (String email) {
-        //BlocProvider.of<FormLoginRegisterBloc>(context, listen: false).add(WritingEmailEvent(email: email));
+        BlocProvider.of<FormLoginRegisterBloc>(context, listen: false).add(WritingEmailEvent(email: email));
         setState(() {
           _emailNameError = false;
           _emailNameErrorText = null;
