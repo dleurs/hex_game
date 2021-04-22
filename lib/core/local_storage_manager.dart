@@ -6,7 +6,7 @@ class LocalStorageManager {
   final String keyStorage;
 
   SharedPreferences? _prefs;
-  FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  //FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   LocalStorageManager(this.keyStorage);
 
@@ -17,21 +17,21 @@ class LocalStorageManager {
       await _prefs?.reload();
     }
     print("Existing keys for keyStorage $keyStorage : ${getKeys()}");
-    print("Existing secure keys for keyStorage $keyStorage : ${await getSecureKeys()}");
+    //print("Existing secure keys for keyStorage $keyStorage : ${await getSecureKeys()}");
   }
 
-  Future<String?> getSecureString(String key) async {
+/*   Future<String?> getSecureString(String key) async {
     return _secureStorage.read(key: _buildKey(key));
-  }
+  } */
 
-  Future<void> setSecureString(String key, String? value) async {
+/*   Future<void> setSecureString(String key, String? value) async {
     String finalKey = _buildKey(key);
     if (value == null) {
       await _secureStorage.delete(key: finalKey);
     } else {
       await _secureStorage.write(key: finalKey, value: value);
     }
-  }
+  } */
 
   void _checkPrefs() {
     if (_prefs == null) {
@@ -123,7 +123,7 @@ class LocalStorageManager {
     _checkPrefs();
     String finalKey = _buildKey(key);
     await _prefs?.remove(finalKey);
-    await _secureStorage.delete(key: finalKey);
+    //await _secureStorage.delete(key: finalKey);
   }
 
   Future<void> clear() async {
@@ -131,10 +131,10 @@ class LocalStorageManager {
       await _prefs?.remove(key);
     }
 
-    var secureKeys = await getSecureKeys();
+/*     var secureKeys = await getSecureKeys();
     for (var key in secureKeys) {
       await _secureStorage.delete(key: key);
-    }
+    } */
   }
 
   bool containsKey(String key) {
@@ -153,7 +153,7 @@ class LocalStorageManager {
     return keys;
   }
 
-  Future<Set<String>> getSecureKeys() async {
+/*   Future<Set<String>> getSecureKeys() async {
     var allSecure = await _secureStorage.readAll();
     Set<String> keys = Set();
     for (var key in allSecure.keys) {
@@ -162,7 +162,7 @@ class LocalStorageManager {
       }
     }
     return keys;
-  }
+  } */
 
   String _buildKey(String key) {
     //return "$keyStorage${Config.appFlavor}.$key";

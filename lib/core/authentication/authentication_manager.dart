@@ -53,7 +53,7 @@ class AuthenticationManager {
     await _storageManager.open();
     _email = _storageManager.getString(EMAIL);
     _pseudo = _storageManager.getString(PSEUDO);
-    _password = await _storageManager.getSecureString(PASSWORD);
+    //_password = await _storageManager.getSecureString(PASSWORD);
     _uid = _storageManager.getString(UID);
     var tokenJson = _storageManager.getJson(TOKEN);
     if (tokenJson != null) {
@@ -124,9 +124,9 @@ class AuthenticationManager {
 
   Future<void> _save() async {
     await _storageManager.open();
-    await _storageManager.setSecureString(EMAIL, _email);
-    await _storageManager.setSecureString(PSEUDO, _pseudo);
-    await _storageManager.setSecureString(PASSWORD, _password);
+    await _storageManager.setString(EMAIL, _email);
+    await _storageManager.setString(PSEUDO, _pseudo);
+    //await _storageManager.setSecureString(PASSWORD, _password);
     await _storageManager.setString(UID, _uid);
     await _storageManager.setJson(TOKEN, _token);
   }
