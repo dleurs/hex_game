@@ -115,7 +115,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     str += "state:" + state.toString() + ",\n";
     str += "_email:" + (_email ?? "null") + ",\n";
     str += "_pseudo:" + (_pseudo ?? "null") + ",\n";
-    str += "_uid:" + (_uid ?? "null") + ",\n";
+    str +=
+        "_uid:" + ((_uid == null) ? "null" : _uid!.substring(0, 3) + "..." + _uid!.substring(_uid!.length - 3)) + ",\n";
     str += "_token:" + (_token?.toShortString() ?? "null") + ",\n";
     str += "}";
     return str;

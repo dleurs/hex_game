@@ -57,16 +57,6 @@ class AuthenticationApiProvider {
     return (listDocs.isNotEmpty);
   }
 
-/*   static Future<bool> isEmailAlreadyUsedFirestore(
-      {required String email}) async {
-    List<DocumentSnapshot> listDocs = (await FirebaseFirestore.instance
-            .collection(PlayerFireDtbPath.users)
-            .where(Player.emailArg, isEqualTo: email)
-            .get())
-        .docs;
-    return (listDocs.isNotEmpty);
-  } */
-
   Future<FirebaseAuthException> isEmailAlreadyUsed({required String email}) async {
     try {
       await dbAuth.signInWithEmailAndPassword(email: email, password: "ficjciqcjoj126129"); //TODO Use private variable
