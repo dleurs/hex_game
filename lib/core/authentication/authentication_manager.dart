@@ -1,6 +1,7 @@
 import 'package:hex_game/core/local_storage_manager.dart';
 import 'package:hex_game/models/authentication/token.dart';
 
+// Singleton state management
 class AuthenticationManager {
   AuthenticationManager._privateConstructor();
 
@@ -28,6 +29,8 @@ class AuthenticationManager {
   final LocalStorageManager _storageManager = LocalStorageManager(_AUTH_KEY);
 
   bool get isLoggedIn => _uid != null;
+
+  bool get isLoggedInEmail => (_uid != null && _email != null);
 
   String? _email;
 

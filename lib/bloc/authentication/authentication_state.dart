@@ -24,6 +24,13 @@ class AuthenticationSuccess extends AuthenticationState {
   }
 }
 
+class AuthenticationSuccessWithRefresh extends AuthenticationState {
+  @override
+  String toString() {
+    return 'AuthenticationSuccessWithRefresh';
+  }
+}
+
 class AuthenticationError extends AuthenticationState {
   final String? error;
 

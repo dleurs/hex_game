@@ -1,4 +1,4 @@
-build-web: ## new-flutter because I am currently working with two versions of flutter, flutter 1.22.6 and up-to-date new-flutter
+build-web: 
 	/Users/dle/Documents/Flutter/Software/new-flutter/bin/flutter build web --release --no-sound-null-safety; 
 
 firebase-login:

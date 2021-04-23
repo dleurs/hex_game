@@ -68,7 +68,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
                 bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
                 BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
                 if (userAlreadyOpenApp == false) {
-                  print("snapshot.hasData : First time opening the app");
                   return SplashScreen();
                 } else {
                   return buildScreen(context);
@@ -93,6 +92,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
           } else if (state is AuthenticationSuccess) {
             this.onLoggedIn();
             this.onRefresh();
+            // } else if (state is AuthenticationSuccessWithRefresh) {
           } else if (state is LoggingErrorWrongPassword) {
             this.onWrongPassword();
           }
