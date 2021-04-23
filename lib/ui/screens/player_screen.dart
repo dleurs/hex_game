@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
+import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
@@ -37,12 +38,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
     if (authBloc.isLoggedIn) {
       return BackButton(
         onPressed: () {
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
+          Beamer.of(context).beamToNamed(HomeScreen.uri.path);
         },
       );
     } else {
