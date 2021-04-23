@@ -10,21 +10,23 @@ import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 
 class PlayerScreen extends StatefulWidget {
-  final String? playerSlug;
+  final String? playerPseudo;
 
-  PlayerScreen({this.playerSlug});
+  static const String PLAYER_PSEUDO = "playerPseudo";
 
-  static BeamPage beamLocation({String? playerSlug}) {
+  PlayerScreen({this.playerPseudo});
+
+  static BeamPage beamLocation({String? playerPseudo}) {
     return BeamPage(
-      key: ValueKey(PlayerScreen.uri(playerSlug: playerSlug).path),
+      key: ValueKey(PlayerScreen.uri(playerPseudo: playerPseudo).path),
       child: PlayerScreen(
-        playerSlug: playerSlug,
+        playerPseudo: playerPseudo,
       ),
     );
   }
 
-  static Uri uri({String? playerSlug}) {
-    return Uri(path: PlayersScreen.uri.path + "/" + (playerSlug ?? ":playerSlug"));
+  static Uri uri({String? playerPseudo}) {
+    return Uri(path: PlayersScreen.uri.path + "/" + (playerPseudo ?? ":" + PlayerScreen.PLAYER_PSEUDO));
   }
 
   @override
@@ -48,9 +50,9 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
 
   @override
   Widget buildScreen(BuildContext context) {
-    String? checkedPlayerSlug;
-    if (FormValidators.isPlayerIdValid(widget.playerSlug)) {
-      checkedPlayerSlug = widget.playerSlug;
+    String? checkedPlayerPseudo;
+    if (FormValidators.isPlayerIdValid(widget.playerPseudo)) {
+      checkedPlayerPseudo = widget.playerPseudo;
     } else {
       return PageNotFoundScreen();
     }
@@ -64,7 +66,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
               style: Theme.of(context).textTheme.headline3,
             ),
             Text(
-              "Player slug : " + checkedPlayerSlug!,
+              "Player pseudo : " + checkedPlayerPseudo!,
               style: Theme.of(context).textTheme.headline4,
             ),
             ElevatedButton(

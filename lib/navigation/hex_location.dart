@@ -4,6 +4,7 @@ import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
+import 'package:hex_game/utils/helpers.dart';
 
 class AppLocation extends BeamLocation {
   @override
@@ -14,14 +15,17 @@ class AppLocation extends BeamLocation {
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) {
-    return [
-      HomeScreen.beamLocation,
-      if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) LoginRegisterScreen.beamLocation,
-      if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) ...[
-        PlayersScreen.beamLocation,
-        if (state.pathParameters.containsKey('playerSlug'))
-          PlayerScreen.beamLocation(playerSlug: state.pathParameters['playerSlug']),
-      ],
-    ];
+    return toList(() sync* {
+      yield HomeScreen.beamLocation;
+      if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) {
+        yield PlayersScreen.beamLocation;
+      }
+      if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) {
+        yield PlayersScreen.beamLocation;
+        if (state.pathParameters.containsKey(PlayerScreen.PLAYER_PSEUDO)) {
+          yield PlayerScreen.beamLocation(playerPseudo: state.pathParameters[PlayerScreen.PLAYER_PSEUDO]);
+        }
+      }
+    });
   }
 }

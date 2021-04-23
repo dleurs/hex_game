@@ -132,8 +132,8 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         IconButton(
           icon: Icon(FlutterIconCom.user),
           onPressed: () {
-            if (authBloc.isLoggedIn) {
-              Beamer.of(context).beamToNamed(PlayerScreen.uri(playerSlug: authBloc.pseudo).path);
+            if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
+              Beamer.of(context).beamToNamed(PlayerScreen.uri(playerPseudo: authBloc.pseudo).path);
             } else {
               Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
             }

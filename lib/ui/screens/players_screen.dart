@@ -4,6 +4,7 @@ import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
+import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:provider/provider.dart';
 
 // DATA
@@ -21,8 +22,6 @@ class PlayersScreen extends StatefulWidget {
   static final Uri uri = Uri(path: "/players");
 
   static final queryParameterPlayer = 'player';
-
-  static final playerSlug = 'playerSlug';
 
   @override
   _PlayersScreenState createState() => _PlayersScreenState();
@@ -59,8 +58,8 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
                     //onTap: () => beamToNamed('/players/${player.pseudo}'),
                     onTap: () => context.currentBeamLocation.update(
                       (state) => state.copyWith(
-                        pathBlueprintSegments: [PlayersScreen.uri.pathSegments[0], ':' + PlayersScreen.playerSlug],
-                        pathParameters: {PlayersScreen.playerSlug: player.pseudo!},
+                        pathBlueprintSegments: [PlayersScreen.uri.pathSegments[0], ':' + PlayerScreen.PLAYER_PSEUDO],
+                        pathParameters: {PlayerScreen.PLAYER_PSEUDO: player.pseudo!},
                       ),
                     ),
                   ),
