@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
-import 'package:hex_game/core/authentication/authentication_manager.dart';
+import 'package:hex_game/core/local_storage_manager.dart';
+import 'package:hex_game/models/authentication/token.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/utils/exceptions.dart';
 
@@ -12,6 +12,115 @@ import './bloc.dart';
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthenticationApiProvider _provider;
+
+  static const String _AUTH_KEY = "hex_game.authentication";
+  static const String EMAIL = "email";
+  static const String PSEUDO = "pseudo";
+  static const String PASSWORD = "password";
+  static const String TOKEN = "token";
+  static const String UID = "uid";
+
+  bool get isLoggedIn => _uid != null;
+  String? _email;
+  String? get email => _email;
+  String? _pseudo;
+  String? get pseudo => _pseudo;
+  String? _password;
+  String? get password => _password;
+  Token? _token;
+  Token? get token => _token;
+  String? _uid;
+  String? get uid => _uid;
+  final LocalStorageManager _storageManager = LocalStorageManager(_AUTH_KEY);
+
+  Future<bool> load() async {
+    await _storageManager.open();
+    _email = _storageManager.getString(EMAIL);
+    _pseudo = _storageManager.getString(PSEUDO);
+    //_password = await _storageManager.getSecureString(PASSWORD);
+    _uid = _storageManager.getString(UID);
+    var tokenJson = _storageManager.getJson(TOKEN);
+    if (tokenJson != null) {
+      //_token = Token.fromJson(tokenJson);
+    }
+    return true;
+  }
+
+  Future<bool> userAlreadyOpenApp() async {
+    await _storageManager.open();
+    String USER_ALREADY_OPEN_APP = 'userAlreadyOpenApp';
+    bool _userAlreadyOpenApp = (_storageManager.getBoolean(USER_ALREADY_OPEN_APP) ?? false);
+    if (!_userAlreadyOpenApp) {
+      print("User open the app for the first time");
+      _storageManager.setBoolean(USER_ALREADY_OPEN_APP, true);
+    } else {
+      print("User already openned the app");
+    }
+    return (_userAlreadyOpenApp);
+  }
+
+  Future<void> doLogin(
+      {required String email, required String password, String? pseudo, Token? token, required String userId}) async {
+    _email = email;
+    _pseudo = pseudo;
+    _password = password;
+    _token = token;
+    _uid = userId;
+    await _save();
+  }
+
+  Future<void> updateCredentials({String? email, String? pseudo, String? password, Token? token, String? uid}) async {
+    if (uid != null) {
+      _uid = uid;
+    }
+    if (email != null) {
+      _email = email;
+    }
+    if (pseudo != null) {
+      _pseudo = pseudo;
+    }
+    if (password != null) {
+      _password = password;
+    }
+    if (token != null) {
+      _token = token;
+    }
+    await _save();
+  }
+
+  Future<void> doLogout() async {
+    _email = null;
+    _pseudo = null;
+    _password = null;
+    _token = null;
+    _uid = null;
+    await _save();
+  }
+
+  Future<void> _save() async {
+    await _storageManager.open();
+    await _storageManager.setString(EMAIL, _email);
+    await _storageManager.setString(PSEUDO, _pseudo);
+    //await _storageManager.setSecureString(PASSWORD, _password);
+    await _storageManager.setString(UID, _uid);
+    await _storageManager.setJson(TOKEN, _token);
+  }
+
+  Future<void> clear() async {
+    await _storageManager.open();
+    await _storageManager.clear();
+  }
+
+  String toString() {
+    String str = "AuthenticationBloc{\n";
+    str += "state:" + state.toString() + ",\n";
+    str += "_email:" + (_email ?? "null") + ",\n";
+    str += "_pseudo:" + (_pseudo ?? "null") + ",\n";
+    str += "_uid:" + (_uid ?? "null") + ",\n";
+    str += "_token:" + (_token?.toShortString() ?? "null") + ",\n";
+    str += "}";
+    return str;
+  }
 
   AuthenticationBloc(this._provider) : super(InitialAuthenticationState());
 
@@ -22,15 +131,15 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     if (event is SynchroniseAuthenticationManager) {
       try {
         //await AuthenticationManager.load();
-        User? user = _provider.dbAuth.currentUser;
-        if (user == null || user.uid.isEmpty) {
-          await AuthenticationManager.instance.doLogout();
+        User? fireUser = _provider.dbAuth.currentUser;
+        if (fireUser == null || fireUser.uid.isEmpty) {
+          await doLogout();
         } else {
-          AuthenticationManager.instance.updateCredentials(email: user.email, uid: user.uid);
+          updateCredentials(email: fireUser.email, uid: fireUser.uid);
         }
-        if (AuthenticationManager.instance.pseudo == null && user != null && user.uid.isNotEmpty) {
-          Player? player = await _provider.getPlayer(uid: user.uid);
-          AuthenticationManager.instance.updateCredentials(pseudo: player!.pseudo);
+        if (pseudo == null && fireUser != null && fireUser.uid.isNotEmpty) {
+          Player? player = await _provider.getPlayer(uid: fireUser.uid);
+          updateCredentials(pseudo: player!.pseudo);
         }
       } catch (e) {}
       yield AuthenticationSuccess();
@@ -43,7 +152,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         }
         User? user = await _provider.register(email: event.email.toLowerCase(), password: event.password);
         user!;
-        await AuthenticationManager.instance.doLogin(
+        await doLogin(
             email: event.email,
             pseudo: event.pseudo,
             password: event.password,
@@ -77,7 +186,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         user!;
         Player? player = await _provider.getPlayer(uid: user.uid);
         player!;
-        await AuthenticationManager.instance.doLogin(
+        await doLogin(
             email: event.email,
             pseudo: player.pseudo,
             password: event.password,
@@ -92,7 +201,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     if (event is LogoutEvent) {
       try {
         await _provider.logout();
-        AuthenticationManager.instance.doLogout();
+        doLogout();
         yield LoggedOut();
       } catch (e) {}
     }

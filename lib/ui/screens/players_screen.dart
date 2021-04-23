@@ -1,7 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
-import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/models/player.dart';
 import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';

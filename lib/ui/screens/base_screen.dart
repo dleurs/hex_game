@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_state.dart';
 import 'package:hex_game/bloc/authentication/bloc.dart';
-import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
@@ -12,7 +11,6 @@ import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/ui/screens/splash_screen.dart';
-import 'package:provider/provider.dart';
 
 abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @protected
@@ -55,14 +53,15 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   }
 
   Widget loadUserAndSyncFirebaseAuth(BuildContext context) {
+    AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return FutureBuilder<bool>(
-        future: AuthenticationManager.load(),
+        future: authBloc.load(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
           if (!snapshotAuthManagerLoad.hasData) {
             return SplashScreen(message: "Load Authentication");
           }
           return FutureBuilder<bool>(
-            future: AuthenticationManager.instance.userAlreadyOpenApp(),
+            future: authBloc.userAlreadyOpenApp(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshotUserAlreadyUsed) {
               if (snapshotUserAlreadyUsed.hasData) {
                 bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
@@ -85,27 +84,28 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @override
   Widget build(BuildContext context) {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: build ${this.toString()}");
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
-          if (state is LoggedOut) {
-            this.onLoggedOut();
-          } else if (state is AuthenticationSuccess) {
-            this.onLoggedIn();
-            this.onRefresh();
-            // } else if (state is AuthenticationSuccessWithRefresh) {
-          } else if (state is LoggingErrorWrongPassword) {
-            this.onWrongPassword();
-          }
-        },
-        child: Scaffold(
+    return BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
+      if (state is LoggedOut) {
+        this.onLoggedOut();
+      } else if (state is AuthenticationSuccess) {
+        this.onLoggedIn();
+        // } else if (state is AuthenticationSuccessWithRefresh) {
+      } else if (state is LoggingErrorWrongPassword) {
+        this.onWrongPassword();
+      }
+    }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, authState) {
+        return Scaffold(
           //backgroundColor: this.backgroundColor,
           appBar: this.buildAppBar(context),
-          body: (BlocProvider.of<AuthenticationBloc>(context).state is InitialAuthenticationState)
+          body: (authState is InitialAuthenticationState)
               ? loadUserAndSyncFirebaseAuth(context)
               : this.buildScreen(context),
           bottomNavigationBar: this.buildBottomNavigationBar(context),
           floatingActionButton: this.buildFloatingActionButton(context),
-        ));
+        );
+      },
+    ));
   }
 
   Widget buildScreen(BuildContext context);
@@ -119,6 +119,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   /// Override this method in each screen that needs a specific one
   ///
   PreferredSizeWidget? buildAppBar(BuildContext context) {
+    AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return AppBar(
       title: TextButton(
         onPressed: () {
@@ -140,8 +141,8 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         IconButton(
           icon: Icon(FlutterIconCom.user),
           onPressed: () {
-            if (AuthenticationManager.instance.isLoggedIn) {
-              Beamer.of(context).beamToNamed(PlayerScreen.uri(playerSlug: AuthenticationManager.instance.pseudo).path);
+            if (authBloc.isLoggedIn) {
+              Beamer.of(context).beamToNamed(PlayerScreen.uri(playerSlug: authBloc.pseudo).path);
             } else {
               Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
             }
@@ -189,12 +190,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   void doLogout() {
     print("doLogout");
     //BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
-  }
-
-  void onRefresh() {
-    print("OnRefresh");
-    setState(() {});
-    //Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
   }
 
   ///
