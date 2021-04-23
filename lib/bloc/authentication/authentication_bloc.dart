@@ -33,7 +33,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   String? get uid => _uid;
   final LocalStorageManager _storageManager = LocalStorageManager(_AUTH_KEY);
 
-  Future<bool> load() async {
+  Future<void> load() async {
     await _storageManager.open();
     _email = _storageManager.getString(EMAIL);
     _pseudo = _storageManager.getString(PSEUDO);
@@ -43,7 +43,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     if (tokenJson != null) {
       //_token = Token.fromJson(tokenJson);
     }
-    return true;
   }
 
   Future<bool> userAlreadyOpenApp() async {
@@ -128,7 +127,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
     yield AuthenticationProcessing();
 
-    if (event is SynchroniseAuthenticationManager) {
+    if (event is SynchroniseAuthentication) {
       try {
         //await AuthenticationManager.load();
         User? fireUser = _provider.dbAuth.currentUser;
@@ -142,7 +141,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
           updateCredentials(pseudo: player!.pseudo);
         }
       } catch (e) {}
-      yield AuthenticationSuccess();
+      yield AuthenticationSuccessNoRedirect();
     }
     if (event is RegisterEvent) {
       try {

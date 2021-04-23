@@ -6,21 +6,28 @@ abstract class AuthenticationState {}
 class InitialAuthenticationState extends AuthenticationState {
   @override
   String toString() {
-    return 'InitialAuthenticationState';
+    return 'InitialAuthentication';
   }
 }
 
 class AuthenticationProcessing extends AuthenticationState {
   @override
   String toString() {
-    return 'AuthenticationProcessingState';
+    return 'AuthenticationProcessing';
   }
 }
 
 class AuthenticationSuccess extends AuthenticationState {
   @override
   String toString() {
-    return 'AuthenticationSuccessState';
+    return 'AuthenticationSuccess';
+  }
+}
+
+class AuthenticationSuccessNoRedirect extends AuthenticationState {
+  @override
+  String toString() {
+    return 'AuthenticationSuccessWithoutRedirect';
   }
 }
 
@@ -31,21 +38,21 @@ class AuthenticationError extends AuthenticationState {
 
   @override
   String toString() {
-    return 'AuthenticationErrorState';
+    return 'AuthenticationError';
   }
 }
 
 class LoggedOut extends AuthenticationState {
   @override
   String toString() {
-    return 'LoggedOutState';
+    return 'LoggedOut';
   }
 }
 
 class RegisterErrorEmailAlreadyUsed extends AuthenticationState {
   @override
   String toString() {
-    return 'RegisterErrorEmailAlreadyUsed ';
+    return 'RegisterErrorEmailAlreadyUsed';
   }
 }
 
@@ -98,14 +105,6 @@ class RegisterErrorFirestore extends AuthenticationState {
     return 'RegisterErrorFirestore : ' + (error ?? "no string error");
   }
 }
-
-/*           yield EmailAlreadyExist();
-        } else if (e.code == "user-not-found") {
-          yield EmailDoesNotExist();
-        } else if (e.code == "user-disabled") {
-          yield EmailUserDisabled();
-        } else if (e.code == "too-many-requests") {
-          yield EmailTooManyRequest(); */
 
 class LoggingErrorWrongPassword extends AuthenticationState {
   @override

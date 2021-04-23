@@ -52,33 +52,26 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     print("ScreenLifecycle: ${this.widget.toStringShort()}: didChangeDependencies ${this.toString()}");
   }
 
-  Widget loadUserAndSyncFirebaseAuth(BuildContext context) {
+  Widget syncUserFirebaseAuth(BuildContext context) {
     AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return FutureBuilder<bool>(
-        future: authBloc.load(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshotAuthManagerLoad) {
-          if (!snapshotAuthManagerLoad.hasData) {
-            return SplashScreen(message: "Load Authentication");
+      future: authBloc.userAlreadyOpenApp(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshotUserAlreadyUsed) {
+        if (snapshotUserAlreadyUsed.hasData) {
+          bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
+          BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthentication());
+          if (userAlreadyOpenApp == false) {
+            return SplashScreen();
+          } else {
+            return buildScreen(context);
           }
-          return FutureBuilder<bool>(
-            future: authBloc.userAlreadyOpenApp(),
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshotUserAlreadyUsed) {
-              if (snapshotUserAlreadyUsed.hasData) {
-                bool userAlreadyOpenApp = snapshotUserAlreadyUsed.data ?? false;
-                BlocProvider.of<AuthenticationBloc>(context).add(SynchroniseAuthenticationManager());
-                if (userAlreadyOpenApp == false) {
-                  return SplashScreen();
-                } else {
-                  return buildScreen(context);
-                }
-              } else if (snapshotUserAlreadyUsed.hasData) {
-                return SplashScreen(message: "Error userAlreadyOpenApp " + snapshotUserAlreadyUsed.error.toString());
-              } else {
-                return SplashScreen();
-              }
-            },
-          );
-        });
+        } else if (snapshotUserAlreadyUsed.hasData) {
+          return SplashScreen(message: "Error userAlreadyOpenApp " + snapshotUserAlreadyUsed.error.toString());
+        } else {
+          return SplashScreen();
+        }
+      },
+    );
   }
 
   @override
@@ -98,9 +91,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
         return Scaffold(
           //backgroundColor: this.backgroundColor,
           appBar: this.buildAppBar(context),
-          body: (authState is InitialAuthenticationState)
-              ? loadUserAndSyncFirebaseAuth(context)
-              : this.buildScreen(context),
+          body: (authState is InitialAuthenticationState) ? syncUserFirebaseAuth(context) : this.buildScreen(context),
           bottomNavigationBar: this.buildBottomNavigationBar(context),
           floatingActionButton: this.buildFloatingActionButton(context),
         );
