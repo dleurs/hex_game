@@ -31,7 +31,7 @@ class AuthenticationApiProvider {
   Future<Player?> getPlayer({required String uid}) async {
     DocumentSnapshot playerDoc = await dbStore.collection(FirestoreDtbPath.USERS).doc(uid).get();
     print(playerDoc);
-    return Player.fromFirebase(playerDoc.data()); //TODO
+    return Player.fromFirebase(playerDoc.data());
   }
 
   Stream<List<Player>> getSteamPlayersWithPseudo() {

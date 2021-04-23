@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 
 class Player extends ChangeNotifier {
   String? uid;

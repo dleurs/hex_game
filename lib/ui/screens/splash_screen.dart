@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hex_game/bloc/authentication/bloc.dart';
-import 'package:hex_game/generated/l10n.dart';
 
 class SplashScreen extends StatefulWidget {
   String? message;
