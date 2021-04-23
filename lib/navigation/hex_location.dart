@@ -18,12 +18,11 @@ class AppLocation extends BeamLocation {
     return [
       HomeScreen.beamLocation,
       if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) LoginRegisterScreen.beamLocation,
-      if (AuthenticationManager.instance.isLoggedIn)
-        if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) ...[
-          PlayersScreen.beamLocation,
-          if (state.pathParameters.containsKey('playerSlug'))
-            PlayerScreen.beamLocation(playerSlug: state.pathParameters['playerSlug']),
-        ],
+      if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) ...[
+        PlayersScreen.beamLocation,
+        if (state.pathParameters.containsKey('playerSlug'))
+          PlayerScreen.beamLocation(playerSlug: state.pathParameters['playerSlug']),
+      ],
     ];
   }
 }

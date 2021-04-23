@@ -6,7 +6,8 @@ class LocalStorageManager {
   final String keyStorage;
 
   SharedPreferences? _prefs;
-  //FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  // FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  // SecureStorage doesn't work on the web
 
   LocalStorageManager(this.keyStorage);
 

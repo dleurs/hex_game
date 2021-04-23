@@ -9,7 +9,7 @@ class AppDimensions {
 
   static const double backIconSize = 40.0;
 
-  static const double smallScreenSize = 600.0;
+  static const double smallScreenSize = 500.0;
   static const double mediumScreenSize = 960.0;
   static const double largeScreenSize = 1280.0;
   static const double xLargeScreenSize = 1920.0;

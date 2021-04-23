@@ -29,21 +29,31 @@ class AuthenticationApiProvider {
   }
 
   Future<Player?> getPlayer({required String uid}) async {
-    DocumentSnapshot playerDoc = await dbStore.collection(PlayerFireDtbPath.users).doc(uid).get();
+    DocumentSnapshot playerDoc = await dbStore.collection(FirestoreDtbPath.USERS).doc(uid).get();
     print(playerDoc);
-    return Player.fromFirebase(playerDoc); //TODO
+    return Player.fromFirebase(playerDoc.data()); //TODO
+  }
+
+  Stream<List<Player>> getSteamPlayersWithPseudo() {
+    return dbStore
+        .collection(FirestoreDtbPath.USERS)
+        //.where(Player.PSEUDO, isNotEqualTo: null)
+        //.orderBy('lastModify', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs.map((document) => Player.fromFirebase(document.data())).toList(),
+        );
   }
 
   Future<void> updatePlayer(
       {required Player player, required SaveFirestoreOperation operation, bool merge = true}) async {
-    return await dbStore.collection(PlayerFireDtbPath.users).doc(player.uid).set(
-        player.toFirebase(operation: operation),
+    return await dbStore.collection(FirestoreDtbPath.USERS).doc(player.uid).set(player.toFirebase(operation: operation),
         SetOptions(merge: merge)); // merge: true to keep dateRegisterAnonymous when converting anon to user
   }
 
   Future<bool> isPseudoAlreadyUsed({required String pseudo}) async {
     List<DocumentSnapshot> listDocs =
-        (await dbStore.collection(PlayerFireDtbPath.users).where(Player.PSEUDO, isEqualTo: pseudo).get()).docs;
+        (await dbStore.collection(FirestoreDtbPath.USERS).where(Player.PSEUDO, isEqualTo: pseudo).get()).docs;
     return (listDocs.isNotEmpty);
   }
 

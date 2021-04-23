@@ -56,7 +56,7 @@ class Player extends ChangeNotifier {
     return mapToFirebase;
   }
 
-  static Player fromFirebase(DocumentSnapshot? fireDoc) {
+  static Player fromFirebase(Map<String, dynamic>? fireDoc) {
     if (fireDoc == null) {
       return Player();
     }
@@ -66,6 +66,6 @@ class Player extends ChangeNotifier {
 
 enum SaveFirestoreOperation { emailRegister, anonymousRegister, update }
 
-class PlayerFireDtbPath {
-  static const String users = 'users';
+class FirestoreDtbPath {
+  static const String USERS = 'users';
 }

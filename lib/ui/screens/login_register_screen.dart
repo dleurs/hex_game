@@ -195,6 +195,10 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
             _pseudoNameError = true;
             _pseudoNameErrorText = 'Pseudo should be between 2 and 20'; // TODO INTL
           }
+          if (value != null && value.contains("@")) {
+            _pseudoNameError = true;
+            _pseudoNameErrorText = 'Pseudo cannot have @ symbol.'; // TODO INTL
+          }
         });
         return null;
       },
@@ -355,7 +359,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
           } else if (formState is EmailUserDisabled) {
             setState(() {
               _emailNameError = true;
-              _emailNameErrorText = 'User link with this email disabled by administrator.'; // TODO INTL
+              _emailNameErrorText = 'Account linked with this email has been disabled by administrator.'; // TODO INTL
             });
           } else if (formState is EmailTooManyRequest) {
             setState(() {
