@@ -92,7 +92,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
             this.onLoggedOut();
           } else if (state is AuthenticationSuccess) {
             this.onLoggedIn();
-          } else if (state is SyncSuccessRefresh) {
             this.onRefresh();
           } else if (state is LoggingErrorWrongPassword) {
             this.onWrongPassword();

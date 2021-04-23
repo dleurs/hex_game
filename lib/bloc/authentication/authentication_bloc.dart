@@ -33,10 +33,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
           AuthenticationManager.instance.updateCredentials(pseudo: player!.pseudo);
         }
       } catch (e) {}
-      yield SyncSuccessRefresh();
-    }
-    if (event is RefreshScreen) {
-      yield SyncSuccessRefresh();
+      yield AuthenticationSuccess();
     }
     if (event is RegisterEvent) {
       try {
