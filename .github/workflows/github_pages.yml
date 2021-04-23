@@ -37,7 +37,7 @@ jobs:
       working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
     - run: git config user.email "flutter-ci@github.com"
       working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
-    - run: git config user.name "flutter-ci"
+    - run: git config user.username "flutter-ci"
       working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
     - run: git remote add secure-origin https://${{ secrets.ACCESS_TOKEN }}@github.com/${{ github.actor }}/${{ github.event.repository.name }}.git
       working-directory: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/web
