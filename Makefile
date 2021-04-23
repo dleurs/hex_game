@@ -10,10 +10,13 @@ firebase-deploy:
 local-to-online: ## Remove '' for linux
 	sed -i '' "s/firebase_keys_local.js/firebase_keys_online.js/" web/index.html; 
 
+cat-index:
+	cat web/index.html; 
+
 online-to-local:
 	sed -i '' "s/firebase_keys_online.js/firebase_keys_local.js/" web/index.html;
 
-deploy-web: local-to-online build-web firebase-deploy online-to-local
+deploy-web: local-to-online cat-index build-web firebase-deploy online-to-local
 	echo "\nDo not forget git push\n"
 	
 generate-intl: ## Generate localization file

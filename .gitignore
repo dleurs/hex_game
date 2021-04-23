@@ -1,6 +1,7 @@
 # Firebase
 android/app/google-services.json
-web/firebase_keys_local.js
+web/firebase-keys-local.js
+bfg-1.14.0.jar
 
 
 # Miscellaneous
