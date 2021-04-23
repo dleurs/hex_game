@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/models/player.dart';
+import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -38,22 +39,35 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
       create: (BuildContext context) => AuthenticationApiProvider().getSteamPlayersWithPseudo(),
       initialData: [],
       child: Consumer<List<Player>>(builder: (context, listPlayer, __) {
-        return ListView(
-          children: listPlayer
-              .where((player) => (player.pseudo!.toLowerCase().contains(playerQuery.toLowerCase())))
-              .map(
-                (player) => ListTile(
-                  title: Text(player.pseudo!),
-                  //onTap: () => beamToNamed('/players/${player.pseudo}'),
-                  onTap: () => context.currentBeamLocation.update(
-                    (state) => state.copyWith(
-                      pathBlueprintSegments: [PlayersScreen.uri.pathSegments[0], ':' + PlayersScreen.playerSlug],
-                      pathParameters: {PlayersScreen.playerSlug: player.pseudo!},
+        if (listPlayer.isEmpty) {
+          return Center(
+            child: SizedBox(
+              child: CircularProgressIndicator(),
+              width: 60,
+              height: 60,
+            ),
+          );
+        }
+        return ResponsiveDesign.centeredAndMaxWidth(
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            children: listPlayer
+                .where((player) => (player.pseudo!.toLowerCase().contains(playerQuery.toLowerCase())))
+                .map(
+                  (player) => ListTile(
+                    title: Text(player.pseudo!),
+                    //onTap: () => beamToNamed('/players/${player.pseudo}'),
+                    onTap: () => context.currentBeamLocation.update(
+                      (state) => state.copyWith(
+                        pathBlueprintSegments: [PlayersScreen.uri.pathSegments[0], ':' + PlayersScreen.playerSlug],
+                        pathParameters: {PlayersScreen.playerSlug: player.pseudo!},
+                      ),
                     ),
                   ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
         );
       }),
     );

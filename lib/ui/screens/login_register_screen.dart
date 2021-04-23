@@ -8,6 +8,7 @@ import 'package:hex_game/bloc/form_login_register/form_login_register_bloc.dart'
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
+import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
@@ -373,24 +374,11 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
-  Widget centeredAndMaxWidth({required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
-      child: Wrap(
-        children: [
-          Center(
-            child: ConstrainedBox(constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize), child: child),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget formLoginRegisterPlayer() {
     return listenersFormAndAuthBlocs(
       child: Form(
         key: _formKey,
-        child: centeredAndMaxWidth(
+        child: ResponsiveDesign.centeredAndMaxWidth(
           child: SingleChildScrollView(
             child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
