@@ -2,9 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/bloc.dart';
-import 'package:hex_game/core/authentication/authentication_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
-import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
@@ -35,7 +33,8 @@ class PlayerScreen extends StatefulWidget {
 class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
   @override
   Widget? buildLeading(BuildContext context) {
-    if (AuthenticationManager.instance.isLoggedIn) {
+    AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
+    if (authBloc.isLoggedIn) {
       return BackButton(
         onPressed: () {
           if (Navigator.of(context).canPop()) {

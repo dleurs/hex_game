@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
         providers: [
           BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
           BlocProvider<FormLoginRegisterBloc>(create: (context) => FormLoginRegisterBloc(AuthenticationApiProvider())),

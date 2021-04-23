@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/core/authentication/authentication_manager.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends BaseScreenState<HomeScreen> {
   @override
   Widget buildScreen(BuildContext context) {
+    AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return Center(
       child: SingleChildScrollView(
         child: Column(
@@ -35,9 +37,7 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Text(
-                AuthenticationManager.instance.isLoggedIn
-                    ? "User logged " + (AuthenticationManager.instance.toString())
-                    : "User not logged",
+                authBloc.isLoggedIn ? "User logged " + (authBloc.toString()) : "User not logged",
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),

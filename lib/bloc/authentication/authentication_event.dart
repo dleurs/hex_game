@@ -33,7 +33,7 @@ class ResetEvent extends AuthenticationEvent {
   List<Object> get props => [];
 }
 
-class SynchroniseAuthenticationManager extends AuthenticationEvent {
+class SynchroniseAuthentication extends AuthenticationEvent {
   @override
   List<Object> get props => [];
 }

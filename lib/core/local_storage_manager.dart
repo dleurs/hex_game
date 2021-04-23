@@ -21,6 +21,19 @@ class LocalStorageManager {
     //print("Existing secure keys for keyStorage $keyStorage : ${await getSecureKeys()}");
   }
 
+  Future<bool> userAlreadyOpenApp() async {
+    await open();
+    String USER_ALREADY_OPEN_APP = 'userAlreadyOpenApp';
+    bool _userAlreadyOpenApp = (getBoolean(USER_ALREADY_OPEN_APP) ?? false);
+    if (!_userAlreadyOpenApp) {
+      print("User open the app for the first time");
+      setBoolean(USER_ALREADY_OPEN_APP, true);
+    } else {
+      print("User already openned the app");
+    }
+    return (_userAlreadyOpenApp);
+  }
+
 /*   Future<String?> getSecureString(String key) async {
     return _secureStorage.read(key: _buildKey(key));
   } */
