@@ -37,7 +37,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
   @override
   Widget? buildLeading(BuildContext context) {
     AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    if (authBloc.isLoggedIn) {
+    if (authBloc.isLoggedIn && widget.playerPseudo! == authBloc.pseudo) {
       return BackButton(
         onPressed: () {
           Beamer.of(context).beamToNamed(HomeScreen.uri.path);
