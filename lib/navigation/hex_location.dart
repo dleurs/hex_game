@@ -15,17 +15,12 @@ class AppLocation extends BeamLocation {
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) {
-    return toList(() sync* {
-      yield HomeScreen.beamLocation;
-      if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) {
-        yield LoginRegisterScreen.beamLocation;
-      }
-      if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) {
-        yield PlayersScreen.beamLocation;
-        if (state.pathParameters.containsKey(PlayerScreen.PLAYER_PSEUDO)) {
-          yield PlayerScreen.beamLocation(playerPseudo: state.pathParameters[PlayerScreen.PLAYER_PSEUDO]);
-        }
-      }
-    });
+    return [
+      HomeScreen.beamLocation,
+      if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) LoginRegisterScreen.beamLocation,
+      if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) PlayersScreen.beamLocation,
+      if (state.pathParameters.containsKey(PlayerScreen.PLAYER_PSEUDO))
+        PlayerScreen.beamLocation(playerPseudo: state.pathParameters[PlayerScreen.PLAYER_PSEUDO]),
+    ];
   }
 }
