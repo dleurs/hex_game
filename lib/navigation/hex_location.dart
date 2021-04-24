@@ -18,7 +18,7 @@ class AppLocation extends BeamLocation {
     return toList(() sync* {
       yield HomeScreen.beamLocation;
       if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) {
-        yield PlayersScreen.beamLocation;
+        yield LoginRegisterScreen.beamLocation;
       }
       if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) {
         yield PlayersScreen.beamLocation;

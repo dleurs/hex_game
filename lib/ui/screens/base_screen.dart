@@ -114,7 +114,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     return AppBar(
       title: TextButton(
         onPressed: () {
-          Beamer.of(context).beamToNamed(HomeScreen.uri.path);
+          Beamer.of(context).beamBack();
         },
         child: Text(
           S.of(context).hex_game_title,
