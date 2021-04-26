@@ -29,6 +29,7 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
           children: [
             Text(
               S.of(context).hex_game_title,
+              key: Key('HomeScreenTitle'),
               style: Theme.of(context).textTheme.headline3,
             ),
             Text(

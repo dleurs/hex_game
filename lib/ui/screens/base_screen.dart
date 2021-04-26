@@ -125,12 +125,14 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
       actions: [
         IconButton(
           icon: Icon(FlutterIconCom.group),
+          key: Key('BaseScreenButtonGoToPlayers'),
           onPressed: () {
             Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
           },
         ),
         IconButton(
           icon: Icon(FlutterIconCom.user),
+          key: Key('BaseScreenButtonGoToPlayer'),
           onPressed: () {
             if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
               Beamer.of(context).beamToNamed(PlayerScreen.uri(playerPseudo: authBloc.pseudo).path);

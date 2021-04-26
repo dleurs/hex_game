@@ -37,7 +37,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
   @override
   Widget? buildLeading(BuildContext context) {
     AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    if (authBloc.isLoggedIn && widget.playerPseudo! == authBloc.pseudo) {
+    if (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo) {
       return BackButton(
         onPressed: () {
           Beamer.of(context).beamToNamed(HomeScreen.uri.path);
@@ -50,6 +50,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
 
   @override
   Widget buildScreen(BuildContext context) {
+    AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     String? checkedPlayerPseudo;
     if (FormValidators.isPlayerIdValid(widget.playerPseudo)) {
       checkedPlayerPseudo = widget.playerPseudo;
@@ -63,17 +64,21 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
           children: [
             Text(
               S.of(context).profile_title,
+              key: Key('PlayerScrenNotConnectedTitle'),
               style: Theme.of(context).textTheme.headline3,
             ),
             Text(
               "Player pseudo : " + checkedPlayerPseudo!,
               style: Theme.of(context).textTheme.headline4,
             ),
-            ElevatedButton(
-                onPressed: () {
-                  BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
-                },
-                child: Text("Logout"))
+            (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo)
+                ? ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
+                    },
+                    child: Text("Logout"),
+                  )
+                : SizedBox()
           ],
         ),
       ),
