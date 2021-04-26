@@ -206,6 +206,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       } catch (e) {}
     }
     if (event is DeleteUserEvent) {
+      yield AuthenticationProcessing();
       User? fireUser = _provider.dbAuth.currentUser;
       if (fireUser == null) {
         throw FireUserNotLogged();
@@ -213,7 +214,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       try {
         var uid = fireUser.uid;
         await fireUser.delete();
-        await _provider.deletePlayer(uid: uid);
+        await _provider.deletePlayer(uid: uid); // TODO Not working properly
+        yield LoggedOut();
       } catch (e) {
         print("Error in DeleteUserEvent AuthBloc : " + e.toString());
       }

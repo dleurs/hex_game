@@ -35,7 +35,7 @@ class AuthenticationApiProvider {
   }
 
   Future<void> deletePlayer({required String uid}) async {
-    return await dbStore.collection(FirestoreDtbPath.USERS).doc(uid).delete();
+    await dbStore.collection(FirestoreDtbPath.USERS).doc(uid).delete();
   }
 
   Stream<List<Player>> getSteamPlayersWithPseudo() {

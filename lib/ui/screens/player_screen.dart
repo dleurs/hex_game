@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
+import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
@@ -73,17 +74,28 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
                 style: Theme.of(context).textTheme.headline4,
               );
               if (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo) {
-                yield ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
-                  },
-                  child: Text("Logout"), //TODO INTL
+                yield ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(width: 120, height: 50),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
+                    },
+                    child: Text("Logout"), //TODO INTL
+                  ),
                 );
-                yield ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context).add(DeleteUserEvent());
-                  },
-                  child: Text("Delete User"), //TODO INTL
+                yield SizedBox(height: AppDimensions.mediumHeight);
+                yield ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(width: 120, height: 50),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthenticationBloc>(context).add(DeleteUserEvent());
+                    },
+                    child: (authBloc.state is AuthenticationProcessing)
+                        ? CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : Text("Delete User"), //TODO INTL
+                  ),
                 );
               }
             },
