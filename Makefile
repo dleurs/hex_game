@@ -15,3 +15,6 @@ generate-intl: ## Generate localization file
 
 generate-model: ## Generate Json serialization for model classes and GraphQL classes from graphql files
 	/Users/dle/Documents/Flutter/Software/new-flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs
+
+drive-test:
+	/Users/dle/Documents/Flutter/Software/new-flutter/bin/flutter drive --target=test_driver/app.dart

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
+import 'package:hex_game/utils/keys_name.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
           children: [
             Text(
               S.of(context).hex_game_title,
-              key: Key('HomeScreenTitle'),
+              key: Key(KeysName.HOME_SCREEN_TITLE),
               style: Theme.of(context).textTheme.headline3,
             ),
             Text(

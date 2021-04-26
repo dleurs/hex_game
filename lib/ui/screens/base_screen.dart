@@ -11,6 +11,7 @@ import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/ui/screens/splash_screen.dart';
+import 'package:hex_game/utils/keys_name.dart';
 
 abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   @protected
@@ -125,14 +126,14 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
       actions: [
         IconButton(
           icon: Icon(FlutterIconCom.group),
-          key: Key('BaseScreenButtonGoToPlayers'),
+          key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYERS),
           onPressed: () {
             Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
           },
         ),
         IconButton(
           icon: Icon(FlutterIconCom.user),
-          key: Key('BaseScreenButtonGoToPlayer'),
+          key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYER),
           onPressed: () {
             if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
               Beamer.of(context).beamToNamed(PlayerScreen.uri(playerPseudo: authBloc.pseudo).path);

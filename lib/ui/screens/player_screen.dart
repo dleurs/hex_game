@@ -64,7 +64,6 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
           children: [
             Text(
               S.of(context).profile_title,
-              key: Key('PlayerScrenNotConnectedTitle'),
               style: Theme.of(context).textTheme.headline3,
             ),
             Text(
