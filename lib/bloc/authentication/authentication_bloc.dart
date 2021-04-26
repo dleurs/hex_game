@@ -205,8 +205,18 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         yield LoggedOut();
       } catch (e) {}
     }
-    if (event is ResetEvent) {
-      yield InitialAuthenticationState();
+    if (event is DeleteUserEvent) {
+      User? fireUser = _provider.dbAuth.currentUser;
+      if (fireUser == null) {
+        throw FireUserNotLogged();
+      }
+      try {
+        var uid = fireUser.uid;
+        await fireUser.delete();
+        await _provider.deletePlayer(uid: uid);
+      } catch (e) {
+        print("Error in DeleteUserEvent AuthBloc : " + e.toString());
+      }
     }
   }
 }

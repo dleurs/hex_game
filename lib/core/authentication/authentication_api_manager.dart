@@ -34,6 +34,10 @@ class AuthenticationApiProvider {
     return Player.fromFirebase(playerDoc.data());
   }
 
+  Future<void> deletePlayer({required String uid}) async {
+    return await dbStore.collection(FirestoreDtbPath.USERS).doc(uid).delete();
+  }
+
   Stream<List<Player>> getSteamPlayersWithPseudo() {
     return dbStore
         .collection(FirestoreDtbPath.USERS)

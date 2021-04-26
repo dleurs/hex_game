@@ -28,7 +28,7 @@ class LogoutEvent extends AuthenticationEvent {
   List<Object> get props => [];
 }
 
-class ResetEvent extends AuthenticationEvent {
+class DeleteUserEvent extends AuthenticationEvent {
   @override
   List<Object> get props => [];
 }

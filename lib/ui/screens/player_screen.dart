@@ -8,6 +8,7 @@ import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
+import 'package:hex_game/utils/helpers.dart';
 
 class PlayerScreen extends StatefulWidget {
   final String? playerPseudo;
@@ -61,24 +62,32 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
     return Center(
       child: SingleChildScrollView(
         child: Column(
-          children: [
-            Text(
-              S.of(context).profile_title,
-              style: Theme.of(context).textTheme.headline3,
-            ),
-            Text(
-              "Player pseudo : " + checkedPlayerPseudo!,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo)
-                ? ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
-                    },
-                    child: Text("Logout"),
-                  )
-                : SizedBox()
-          ],
+          children: toList(
+            () sync* {
+              yield Text(
+                S.of(context).profile_title,
+                style: Theme.of(context).textTheme.headline3,
+              );
+              yield Text(
+                "Player pseudo : " + checkedPlayerPseudo!,
+                style: Theme.of(context).textTheme.headline4,
+              );
+              if (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo) {
+                yield ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
+                  },
+                  child: Text("Logout"), //TODO INTL
+                );
+                yield ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<AuthenticationBloc>(context).add(DeleteUserEvent());
+                  },
+                  child: Text("Delete User"), //TODO INTL
+                );
+              }
+            },
+          ),
         ),
       ),
     );
