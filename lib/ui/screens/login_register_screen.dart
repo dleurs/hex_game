@@ -7,7 +7,6 @@ import 'package:hex_game/bloc/authentication/authentication_state.dart';
 import 'package:hex_game/bloc/form_login_register/form_login_register_bloc.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
-import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
@@ -384,43 +383,47 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return listenersFormAndAuthBlocs(
       child: Form(
         key: _formKey,
-        child: ResponsiveDesign.centeredAndMaxWidth(
-          child: SingleChildScrollView(
-            child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-              builder: (context, state) {
-                return BlocBuilder<FormLoginRegisterBloc, FormLoginRegisterState>(
-                  builder: (context, formState) {
-                    return Column(
-                      children: toList(() sync* {
-                        yield sizedBoxMedium();
-                        yield welcomeMessage();
-                        yield sizedBoxMedium();
-                        yield email();
-                        yield sizedBoxSmall();
-                        if (doIShowEmailValidationButton(formState)) {
-                          yield buttonValidateEmail(context: context);
-                        }
-                        if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
-                          yield emailFoundOrNotMessage(context: context);
-                          yield sizedBoxSmall();
-                        }
-                        if (formState is EmailDoesNotExist) {
-                          yield pseudo();
-                          yield sizedBoxMedium();
-                        }
-                        if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
-                          yield password(context);
-                          yield sizedBoxMedium();
-                          yield buttonValidateEmailPseudoPassword(context: context);
-                        }
-                      }),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
+            child: Center(
+                child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+              child: SingleChildScrollView(
+                child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                  builder: (context, state) {
+                    return BlocBuilder<FormLoginRegisterBloc, FormLoginRegisterState>(
+                      builder: (context, formState) {
+                        return Column(
+                          children: toList(() sync* {
+                            yield sizedBoxMedium();
+                            yield welcomeMessage();
+                            yield sizedBoxMedium();
+                            yield email();
+                            yield sizedBoxSmall();
+                            if (doIShowEmailValidationButton(formState)) {
+                              yield buttonValidateEmail(context: context);
+                            }
+                            if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
+                              yield emailFoundOrNotMessage(context: context);
+                              yield sizedBoxSmall();
+                            }
+                            if (formState is EmailDoesNotExist) {
+                              yield pseudo();
+                              yield sizedBoxMedium();
+                            }
+                            if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
+                              yield password(context);
+                              yield sizedBoxMedium();
+                              yield buttonValidateEmailPseudoPassword(context: context);
+                            }
+                          }),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
-          ),
-        ),
+                ),
+              ),
+            ))),
       ),
     );
   }

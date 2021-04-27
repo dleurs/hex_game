@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
             initialPath: PlayersScreen.uri.path,
             locationBuilder: SimpleLocationBuilder(
               routes: {
-                '/': (context) => Scaffold(
+                PlayersScreen.uri.path: (context) => Scaffold(
                       body: Beamer(
                         key: _beamerKey,
                         routerDelegate: BeamerRouterDelegate(
