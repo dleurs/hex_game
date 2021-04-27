@@ -25,8 +25,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   String? get email => _email;
   String? _pseudo;
   String? get pseudo => _pseudo;
-  String? _password;
-  String? get password => _password;
+  //String? _password;
+  //String? get password => _password;
   Token? _token;
   Token? get token => _token;
   String? _uid;
@@ -62,7 +62,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       {required String email, required String password, String? pseudo, Token? token, required String userId}) async {
     _email = email;
     _pseudo = pseudo;
-    _password = password;
+    //_password = password;
     _token = token;
     _uid = userId;
     await _save();
@@ -78,9 +78,9 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     if (pseudo != null) {
       _pseudo = pseudo;
     }
-    if (password != null) {
-      _password = password;
-    }
+    // if (password != null) {
+    //   _password = password;
+    // }
     if (token != null) {
       _token = token;
     }
@@ -90,7 +90,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   Future<void> doLogout() async {
     _email = null;
     _pseudo = null;
-    _password = null;
+    //_password = null;
     _token = null;
     _uid = null;
     await _save();
@@ -212,9 +212,10 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         throw FireUserNotLogged();
       }
       try {
-        var uid = fireUser.uid;
+        await _provider.deletePlayer(uid: fireUser.uid); // TODO Not working properly
         await fireUser.delete();
-        await _provider.deletePlayer(uid: uid); // TODO Not working properly
+        await _provider.logout();
+        doLogout();
         yield LoggedOut();
       } catch (e) {
         print("Error in DeleteUserEvent AuthBloc : " + e.toString());

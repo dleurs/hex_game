@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/bloc/authentication/authentication_state.dart';
 import 'package:hex_game/bloc/authentication/bloc.dart';
+import 'package:hex_game/bloc/form_login_register/form_login_register_bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
@@ -138,6 +139,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
             if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
               Beamer.of(context).beamToNamed(PlayerScreen.uri(playerPseudo: authBloc.pseudo).path);
             } else {
+              BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailResetEvent());
               Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
             }
           },

@@ -69,10 +69,12 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
                 S.of(context).profile_title,
                 style: Theme.of(context).textTheme.headline3,
               );
+              yield SizedBox(height: AppDimensions.mediumHeight);
               yield Text(
                 "Player pseudo : " + checkedPlayerPseudo!,
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headline6,
               );
+              yield SizedBox(height: AppDimensions.mediumHeight);
               if (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo) {
                 yield ConstrainedBox(
                   constraints: BoxConstraints.tightFor(width: 120, height: 50),
