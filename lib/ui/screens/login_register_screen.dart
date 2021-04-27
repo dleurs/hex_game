@@ -11,6 +11,7 @@ import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
+import 'package:hex_game/utils/keys_name.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
   static final BeamPage beamLocation = BeamPage(
@@ -64,6 +65,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
       children: [
         Text(
           "Welcome", //TODO intl
+          key: Key(KeysName.LOGIN_REGISTER_SCREEN_TITLE),
           style: Theme.of(context).textTheme.headline4,
         ),
       ],
@@ -86,6 +88,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     var readOnly = (!doIShowEmailValidationButton(BlocProvider.of<FormLoginRegisterBloc>(context).state));
     return TextFormField(
       readOnly: readOnly,
+      key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_EMAIL),
       style: TextStyle(color: readOnly ? Colors.grey[600] : Colors.black),
       keyboardType: TextInputType.emailAddress,
       focusNode: _emailFocusNode,
@@ -146,6 +149,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: 120, height: 50),
       child: ElevatedButton(
+        key: Key(KeysName.LOGIN_REGISTER_SCREEN_BUTTON_CHECK_EMAIL_ONLY),
         child: (BlocProvider.of<FormLoginRegisterBloc>(context).state is EmailCheckProcessing)
             ? CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -180,6 +184,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
   TextFormField pseudo() {
     return TextFormField(
+      key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_PSEUDO),
       style: TextStyle(color: Colors.black),
       keyboardType: TextInputType.text,
       focusNode: _pseudoFocusNode,
@@ -230,6 +235,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
 
   TextFormField password(BuildContext context) {
     return TextFormField(
+      key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_PASSWORD),
       focusNode: _passwordFocusNode,
       obscureText: _passwordObscur,
       controller: _password,
@@ -289,6 +295,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: 120, height: 50),
       child: ElevatedButton(
+        key: Key(KeysName.LOGIN_REGISTER_SCREEN_BUTTON_EMAIL_PASSWORD),
         child: (authState is AuthenticationProcessing)
             ? CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

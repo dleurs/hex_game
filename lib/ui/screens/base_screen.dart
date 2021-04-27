@@ -115,6 +115,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
     AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return AppBar(
       title: TextButton(
+        key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_HOME),
         onPressed: () {
           Beamer.of(context).beamToNamed(HomeScreen.uri.path);
         },

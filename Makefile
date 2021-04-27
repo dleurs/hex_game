@@ -18,3 +18,7 @@ generate-model: ## Generate Json serialization for model classes and GraphQL cla
 
 drive-test:
 	/Users/dle/Documents/Flutter/Software/new-flutter/bin/flutter drive --target=test_driver/app.dart
+
+# drive-test-web:
+# 	/Users/dle/Documents/Flutter/Software/utils/chromedriver --port=4444
+# 	/Users/dle/Documents/Flutter/Software/new-flutter/bin/flutter drive --target=test_driver/app.dart --browser-name=chrome --release

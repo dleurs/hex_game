@@ -10,6 +10,7 @@ import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
+import 'package:hex_game/utils/keys_name.dart';
 
 class PlayerScreen extends StatefulWidget {
   final String? playerPseudo;
@@ -67,6 +68,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
             () sync* {
               yield Text(
                 S.of(context).profile_title,
+                key: Key(KeysName.PLAYER_SCREEN_TITLE),
                 style: Theme.of(context).textTheme.headline3,
               );
               yield SizedBox(height: AppDimensions.mediumHeight);
@@ -79,6 +81,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
                 yield ConstrainedBox(
                   constraints: BoxConstraints.tightFor(width: 120, height: 50),
                   child: ElevatedButton(
+                    key: Key(KeysName.PLAYER_SCREEN_BUTTON_LOGOUT),
                     onPressed: () {
                       BlocProvider.of<AuthenticationBloc>(context).add(LogoutEvent());
                     },
@@ -89,6 +92,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
                 yield ConstrainedBox(
                   constraints: BoxConstraints.tightFor(width: 120, height: 50),
                   child: ElevatedButton(
+                    key: Key(KeysName.PLAYER_SCREEN_BUTTON_DELETE_USER),
                     onPressed: () {
                       BlocProvider.of<AuthenticationBloc>(context).add(DeleteUserEvent());
                     },
