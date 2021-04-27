@@ -51,7 +51,7 @@ void main() {
       // First, tap the button.
       await driver.tap(baseScreenButtonPlayer);
       // Can redirect to loginRegisterScreen or PlayerScreen if logged
-      final isLogged = await isPresent(playerScreenTitle, driver);
+      final isLogged = await isPresent(playerScreenButtonLogout, driver);
       print("isLogged : " + isLogged.toString());
       if (isLogged) {
         await driver.tap(playerScreenButtonLogout);
@@ -75,17 +75,24 @@ void main() {
       expect(await driver.getText(loginRegisterScreenTitle), "Welcome");
     });
 
-    test('Step 5 : Enter email', () async {
+    test('Step 6 : Enter wrong email and get error', () async {
       await driver.tap(loginRegisterScreenTexFormFieldEmail);
       await driver.enterText("wrongEmail");
       await driver.tap(loginRegisterScreenButtonCheckEmail);
       expect(await driver.getText(find.text("Please enter a valid email address.")),
           "Please enter a valid email address.");
     });
+
+    test('Step 7 : Enter correct email', () async {
+      await driver.tap(loginRegisterScreenTexFormFieldEmail);
+      await driver.enterText("dimitritest@hexgameonline.ovh");
+      await driver.tap(loginRegisterScreenButtonCheckEmail);
+      expect(await driver.getText(find.text("Register")), "Register");
+    });
   });
 }
 
-isPresent(SerializableFinder byValueKey, FlutterDriver driver, {Duration timeout = const Duration(seconds: 1)}) async {
+isPresent(SerializableFinder byValueKey, FlutterDriver driver, {Duration timeout = const Duration(seconds: 3)}) async {
   try {
     await driver.waitFor(byValueKey, timeout: timeout);
     return true;

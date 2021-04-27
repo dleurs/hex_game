@@ -72,7 +72,7 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
                       (player) => ListTile(
                         title: Text(player.pseudo!),
                         subtitle: (player.dateRegister != null)
-                            ? Text("Created at " + player.dateRegister!)
+                            ? Text("Created in " + player.dateRegister!)
                             : SizedBox(), //TODO INTL
                         //onTap: () => beamToNamed('/players/${player.pseudo}'),
                         onTap: () => context.currentBeamLocation.update(
