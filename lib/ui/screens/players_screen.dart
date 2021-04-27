@@ -58,10 +58,10 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
               child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
                   child: ListView.builder(
-                    shrinkWrap: true,
+                    //shrinkWrap: true,
                     itemCount: listPlayer.length,
                     itemBuilder: (context, index) {
                       Player player = listPlayer[index];
