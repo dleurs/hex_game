@@ -1,5 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:hex_game/ui/screens/game_room_screen.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
@@ -14,7 +15,7 @@ class AppLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) {
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
       HomeScreen.beamLocation,
       if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) LoginRegisterScreen.beamLocation,
@@ -24,3 +25,19 @@ class AppLocation extends BeamLocation {
     ];
   }
 }
+
+class GameLocation extends BeamLocation {
+  @override
+  List<String> get pathBlueprints => [
+        GameRoomScreen.uri.path,
+      ];
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    return [
+      GameRoomScreen.beamLocation,
+    ];
+  }
+}
+
+List<BeamLocation<BeamState>> beamLocations = [AppLocation(), GameLocation()];

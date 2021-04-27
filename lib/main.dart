@@ -6,8 +6,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
-import 'package:hex_game/navigation/hex_location.dart';
+import 'package:hex_game/navigation/app_location.dart';
+import 'package:hex_game/navigation/bottom_nav_bar.dart';
+import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
+import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'bloc/form_login_register/form_login_register_bloc.dart';
@@ -20,15 +23,16 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
-    notFoundPage: BeamPage(
+  final _beamerKey = GlobalKey<BeamerState>();
+
+  /*final routerDelegate = BeamerRouterDelegate(
+     notFoundPage: BeamPage(
       key: UniqueKey(),
       child: PageNotFoundScreen(),
-    ),
-    beamLocations: [
+    ), 
+     beamLocations: [
       AppLocation(),
-    ],
-  );
+    ], */
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,26 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp.router(
           title: "Hex Game",
-          routerDelegate: routerDelegate,
+          routerDelegate: BeamerRouterDelegate(
+            initialPath: PlayersScreen.uri.path,
+            locationBuilder: SimpleLocationBuilder(
+              routes: {
+                '/': (context) => Scaffold(
+                      body: Beamer(
+                        key: _beamerKey,
+                        routerDelegate: BeamerRouterDelegate(
+                          locationBuilder: BeamerLocationBuilder(
+                            beamLocations: beamLocations,
+                          ),
+                        ),
+                      ),
+                      bottomNavigationBar: BottomNavigationBarWidget(
+                        beamerKey: _beamerKey,
+                      ),
+                    )
+              },
+            ),
+          ),
           routeInformationParser: BeamerRouteInformationParser(),
           localizationsDelegates: [
             S.delegate,
