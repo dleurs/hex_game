@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Player extends ChangeNotifier {
   String? uid;
@@ -6,7 +8,9 @@ class Player extends ChangeNotifier {
   String? pseudo;
   String? email;
   bool optInNewsletter;
-  Player({this.uid, this.isAnonymous = false, this.pseudo, this.email, this.optInNewsletter = false});
+  String? dateRegister;
+  Player(
+      {this.uid, this.isAnonymous = false, this.pseudo, this.email, this.optInNewsletter = false, this.dateRegister});
 
   static const String UID = "uid";
   static const String IS_ANONYMOUS = "isAnonymous";
@@ -40,7 +44,6 @@ class Player extends ChangeNotifier {
       UID: uid,
       IS_ANONYMOUS: isAnonymous,
       PSEUDO: pseudo,
-      //EMAIL: email,
       OPT_IN_NEWSLETTER: optInNewsletter,
       DATE_LAST_UPDATE: DateTime.now()
     };
@@ -57,7 +60,14 @@ class Player extends ChangeNotifier {
     if (fireDoc == null) {
       return Player();
     }
-    return Player(uid: fireDoc[UID], pseudo: fireDoc[PSEUDO]);
+    var format = DateFormat.yMMMMd(Intl.getCurrentLocale());
+    Timestamp timestamp = fireDoc[DATE_REGISTER_EMAIL];
+    DateTime dateTime = timestamp.toDate();
+    return Player(
+      uid: fireDoc[UID],
+      pseudo: fireDoc[PSEUDO],
+      dateRegister: format.format(dateTime),
+    );
   }
 }
 

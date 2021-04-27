@@ -41,6 +41,7 @@ class AuthenticationApiProvider {
   Stream<List<Player>> getSteamPlayersWithPseudo() {
     return dbStore
         .collection(FirestoreDtbPath.USERS)
+        .orderBy(Player.DATE_REGISTER_EMAIL)
         //.where(Player.PSEUDO, isNotEqualTo: null)
         //.orderBy('lastModify', descending: true)
         .snapshots()

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/models/player.dart';
+import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/responsive_designs.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
@@ -51,19 +52,28 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
         return ResponsiveDesign.centeredAndMaxWidth(
           child: Column(
             children: [
+              SizedBox(
+                height: AppDimensions.smallHeight,
+              ),
               Text(
                 "Players",
                 key: Key(KeysName.PLAYERS_SCREEN_TITLE),
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              SizedBox(
+                height: AppDimensions.smallHeight,
               ),
               ListView(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 children: listPlayer
-                    .where((player) => (player.pseudo!.toLowerCase().contains(playerQuery.toLowerCase())))
+                    .where((Player player) => (player.pseudo!.toLowerCase().contains(playerQuery.toLowerCase())))
                     .map(
                       (player) => ListTile(
                         title: Text(player.pseudo!),
+                        subtitle: (player.dateRegister != null)
+                            ? Text("Created at " + player.dateRegister!)
+                            : SizedBox(), //TODO INTL
                         //onTap: () => beamToNamed('/players/${player.pseudo}'),
                         onTap: () => context.currentBeamLocation.update(
                           (state) => state.copyWith(
