@@ -15,7 +15,7 @@ class AppLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
     return [
       HomeScreen.beamLocation,
       if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) LoginRegisterScreen.beamLocation,
@@ -33,7 +33,7 @@ class GameLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
     return [
       GameRoomScreen.beamLocation,
     ];

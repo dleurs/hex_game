@@ -16,7 +16,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   @override
   void initState() {
-    widget.beamerKey.currentState!.routerDelegate.addListener(() => _updateCurrentIndex());
+    widget.beamerKey.currentState?.routerDelegate.addListener(() => _updateCurrentIndex());
     super.initState();
   }
 
@@ -29,12 +29,12 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           BottomNavigationBarItem(label: 'Game', icon: Icon(Icons.article)),
         ],
         onTap: (index) {
-          widget.beamerKey.currentState!.routerDelegate.beamTo(beamLocations[index]);
+          widget.beamerKey.currentState?.routerDelegate.beamTo(beamLocations[index]);
         });
   }
 
   void _updateCurrentIndex() {
-    final index = (widget.beamerKey.currentState!.currentBeamLocation is AppLocation) ? 0 : 1;
+    final index = (widget.beamerKey.currentState?.currentLocation is AppLocation) ? 0 : 1;
     if (index != _currentIndex) {
       setState(() => _currentIndex = index);
     }
