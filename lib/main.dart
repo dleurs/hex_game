@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
               key: UniqueKey(),
               child: PageNotFoundScreen(),
             ),
-            initialPath: '/',
+            initialPath: '/home',
             locationBuilder: SimpleLocationBuilder(
               routes: {
                 '/*': (context) => Scaffold(
