@@ -49,9 +49,10 @@ class MyApp extends StatelessWidget {
               key: UniqueKey(),
               child: PageNotFoundScreen(),
             ),
+            initialPath: '/',
             locationBuilder: SimpleLocationBuilder(
               routes: {
-                '/': (context) => Scaffold(
+                '/*': (context) => Scaffold(
                     body: Beamer(
                       key: _beamerKey,
                       routerDelegate: BeamerRouterDelegate(
