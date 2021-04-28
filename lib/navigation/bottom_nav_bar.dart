@@ -1,6 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:hex_game/navigation/app_location.dart';
+import 'package:hex_game/navigation/beam_locations.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   BottomNavigationBarWidget({required this.beamerKey});
@@ -22,6 +22,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_currentIndex >= 2) {
+      return SizedBox();
+    }
     return BottomNavigationBar(
         currentIndex: _currentIndex,
         items: [
@@ -34,7 +37,14 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   }
 
   void _updateCurrentIndex() {
-    final index = (widget.beamerKey.currentState?.currentLocation is AppLocation) ? 0 : 1;
+    int index;
+    if (widget.beamerKey.currentState?.currentLocation is HomeLocation) {
+      index = 0;
+    } else if (widget.beamerKey.currentState?.currentLocation is GameLocation) {
+      index = 1;
+    } else {
+      index = 2;
+    }
     if (index != _currentIndex) {
       setState(() => _currentIndex = index);
     }

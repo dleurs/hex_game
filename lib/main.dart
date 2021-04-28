@@ -6,7 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
-import 'package:hex_game/navigation/app_location.dart';
+import 'package:hex_game/navigation/beam_locations.dart';
 import 'package:hex_game/navigation/bottom_nav_bar.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
