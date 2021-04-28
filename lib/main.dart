@@ -10,6 +10,7 @@ import 'package:hex_game/navigation/app_location.dart';
 import 'package:hex_game/navigation/bottom_nav_bar.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
+import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -44,22 +45,24 @@ class MyApp extends StatelessWidget {
         child: MaterialApp.router(
           title: "Hex Game",
           routerDelegate: BeamerRouterDelegate(
-            initialPath: PlayersScreen.uri.path,
+            notFoundPage: BeamPage(
+              key: UniqueKey(),
+              child: PageNotFoundScreen(),
+            ),
             locationBuilder: SimpleLocationBuilder(
               routes: {
-                PlayersScreen.uri.path: (context) => Scaffold(
-                      body: Beamer(
-                        key: _beamerKey,
-                        routerDelegate: BeamerRouterDelegate(
-                          locationBuilder: BeamerLocationBuilder(
-                            beamLocations: beamLocations,
-                          ),
+                '/': (context) => Scaffold(
+                    body: Beamer(
+                      key: _beamerKey,
+                      routerDelegate: BeamerRouterDelegate(
+                        locationBuilder: BeamerLocationBuilder(
+                          beamLocations: beamLocations,
                         ),
                       ),
-                      bottomNavigationBar: BottomNavigationBarWidget(
-                        beamerKey: _beamerKey,
-                      ),
-                    )
+                    ),
+                    bottomNavigationBar: BottomNavigationBarWidget(
+                      beamerKey: _beamerKey,
+                    ))
               },
             ),
           ),
