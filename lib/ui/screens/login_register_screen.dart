@@ -404,46 +404,51 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     return listenersFormAndAuthBlocs(
       child: Form(
         key: _formKey,
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
-              child: SingleChildScrollView(
-                child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                  builder: (context, state) {
-                    return BlocBuilder<FormLoginRegisterBloc, FormLoginRegisterState>(
-                      builder: (context, formState) {
-                        return Column(
-                          children: toList(() sync* {
-                            yield sizedBoxMedium();
-                            yield welcomeMessage();
-                            yield sizedBoxMedium();
-                            yield email();
-                            if (doIShowEmailValidationButton(formState)) {
-                              yield sizedBoxXSmall();
-                              yield buttonValidateEmail(context: context);
-                            }
-                            if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
-                              yield emailFoundOrNotMessage(context: context);
-                              yield sizedBoxSmall();
-                            }
-                            if (formState is EmailDoesNotExist) {
-                              yield pseudo();
-                              yield sizedBoxXSmall();
-                            }
-                            if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
-                              yield password(context);
-                              yield sizedBoxSmall();
-                              yield buttonValidateEmailPseudoPassword(context: context);
-                            }
-                          }),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
+                  child: SingleChildScrollView(
+                    child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                      builder: (context, state) {
+                        return BlocBuilder<FormLoginRegisterBloc, FormLoginRegisterState>(
+                          builder: (context, formState) {
+                            return Column(
+                              children: toList(() sync* {
+                                yield sizedBoxMedium();
+                                yield welcomeMessage();
+                                yield sizedBoxMedium();
+                                yield email();
+                                if (doIShowEmailValidationButton(formState)) {
+                                  yield sizedBoxXSmall();
+                                  yield buttonValidateEmail(context: context);
+                                }
+                                if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
+                                  yield emailFoundOrNotMessage(context: context);
+                                  yield sizedBoxSmall();
+                                }
+                                if (formState is EmailDoesNotExist) {
+                                  yield pseudo();
+                                  yield sizedBoxXSmall();
+                                }
+                                if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
+                                  yield password(context);
+                                  yield sizedBoxSmall();
+                                  yield buttonValidateEmailPseudoPassword(context: context);
+                                }
+                              }),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
-              ),
-            )),
+                    ),
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
