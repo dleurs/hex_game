@@ -83,64 +83,75 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
-  TextFormField email() {
+  Widget sizedBoxXSmall() {
+    return SizedBox(
+      height: AppDimensions.xSmallHeight,
+    );
+  }
+
+  Widget email() {
     var readOnly = (!doIShowEmailValidationButton(BlocProvider.of<FormLoginRegisterBloc>(context).state));
-    return TextFormField(
-      readOnly: readOnly,
-      key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_EMAIL),
-      style: TextStyle(color: readOnly ? Colors.grey[600] : Colors.black),
-      keyboardType: TextInputType.emailAddress,
-      focusNode: _emailFocusNode,
-      controller: _email,
-      validator: (String? value) {
-        setState(() {
-          if (value != null && value.isEmpty) {
-            _emailNameError = true;
-            _emailNameErrorText = 'Email required.'; // TODO INTL
-          }
-          RegExp regex = new RegExp(FormValidators.EMAIL_PATTERN);
-          if (value != null && !regex.hasMatch(value)) {
-            _emailNameError = true;
-            _emailNameErrorText = 'Please enter a valid email address.'; // TODO INTL
-          }
-        });
-        return null;
-      },
-      decoration: InputDecoration(
-        prefixIcon: Icon(
-          Icons.email,
-          color: Colors.grey,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          maxHeight: AppDimensions.minAndMaxHeightTextFormFieldNoShiftDownOnError,
+          minHeight: AppDimensions.minAndMaxHeightTextFormFieldNoShiftDownOnError),
+      child: TextFormField(
+        readOnly: readOnly,
+        key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_EMAIL),
+        style: TextStyle(color: readOnly ? Colors.grey[600] : Colors.black),
+        keyboardType: TextInputType.emailAddress,
+        focusNode: _emailFocusNode,
+        controller: _email,
+        validator: (String? value) {
+          setState(() {
+            if (value != null && value.isEmpty) {
+              _emailNameError = true;
+              _emailNameErrorText = 'Email required.'; // TODO INTL
+            }
+            RegExp regex = new RegExp(FormValidators.EMAIL_PATTERN);
+            if (value != null && !regex.hasMatch(value)) {
+              _emailNameError = true;
+              _emailNameErrorText = 'Please enter a valid email address.'; // TODO INTL
+            }
+          });
+          return null;
+        },
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.email,
+            color: Colors.grey,
+          ),
+          labelText: 'Email', // TODO INTL
+          labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
+          errorText: _emailNameErrorText,
+          suffixIcon: readOnly
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _email.text = "";
+                      _password.text = "";
+                    });
+                    BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailResetEvent());
+                  },
+                  icon: Icon(Icons.cached_outlined))
+              : null,
+          hintText: 'Email', //TODO INTL
+          contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
         ),
-        labelText: 'Email', // TODO INTL
-        labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
-        errorText: _emailNameErrorText,
-        suffixIcon: readOnly
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    _email.text = "";
-                    _password.text = "";
-                  });
-                  BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailResetEvent());
-                },
-                icon: Icon(Icons.cached_outlined))
-            : null,
-        hintText: 'Email', //TODO INTL
-        contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        onChanged: (String email) {
+          BlocProvider.of<FormLoginRegisterBloc>(context, listen: false).add(WritingEmailEvent(email: email));
+          setState(() {
+            _emailNameError = false;
+            _emailNameErrorText = null;
+          });
+        },
+        onFieldSubmitted: (value) {
+          if (!_emailNameError) {
+            FocusScope.of(context).requestFocus(_emailFocusNode);
+          }
+        },
       ),
-      onChanged: (String email) {
-        BlocProvider.of<FormLoginRegisterBloc>(context, listen: false).add(WritingEmailEvent(email: email));
-        setState(() {
-          _emailNameError = false;
-          _emailNameErrorText = null;
-        });
-      },
-      onFieldSubmitted: (value) {
-        if (!_emailNameError) {
-          FocusScope.of(context).requestFocus(_emailFocusNode);
-        }
-      },
     );
   }
 
@@ -181,109 +192,119 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
     );
   }
 
-  TextFormField pseudo() {
-    return TextFormField(
-      key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_PSEUDO),
-      style: TextStyle(color: Colors.black),
-      keyboardType: TextInputType.text,
-      focusNode: _pseudoFocusNode,
-      controller: _pseudo,
-      validator: (value) {
-        setState(() {
-          if (value != null && value.isEmpty) {
-            _pseudoNameError = true;
-            _pseudoNameErrorText = 'Please enter a valid pseudo.'; // TODO INTL
-          }
-          RegExp regex = new RegExp(FormValidators.PSEUDO_PATTERN);
-          if (value != null && !regex.hasMatch(value)) {
-            _pseudoNameError = true;
-            _pseudoNameErrorText = 'Pseudo should be between 2 and 20'; // TODO INTL
-          }
-          if (value != null && value.contains("@")) {
-            _pseudoNameError = true;
-            _pseudoNameErrorText = 'Pseudo cannot have @ symbol.'; // TODO INTL
-          }
-        });
-        return null;
-      },
-      decoration: InputDecoration(
-        prefixIcon: Icon(
-          FlutterIconCom.user,
-          color: Colors.grey,
+  Widget pseudo() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          maxHeight: AppDimensions.minAndMaxHeightTextFormFieldNoShiftDownOnError,
+          minHeight: AppDimensions.minAndMaxHeightTextFormFieldNoShiftDownOnError),
+      child: TextFormField(
+        key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_PSEUDO),
+        style: TextStyle(color: Colors.black),
+        keyboardType: TextInputType.text,
+        focusNode: _pseudoFocusNode,
+        controller: _pseudo,
+        validator: (value) {
+          setState(() {
+            if (value != null && value.isEmpty) {
+              _pseudoNameError = true;
+              _pseudoNameErrorText = 'Please enter a valid pseudo.'; // TODO INTL
+            }
+            RegExp regex = new RegExp(FormValidators.PSEUDO_PATTERN);
+            if (value != null && !regex.hasMatch(value)) {
+              _pseudoNameError = true;
+              _pseudoNameErrorText = 'Pseudo should be between 2 and 20'; // TODO INTL
+            }
+            if (value != null && value.contains("@")) {
+              _pseudoNameError = true;
+              _pseudoNameErrorText = 'Pseudo cannot have @ symbol.'; // TODO INTL
+            }
+          });
+          return null;
+        },
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            FlutterIconCom.user,
+            color: Colors.grey,
+          ),
+          hintText: 'Pseudo', //TODO INTL
+          labelText: 'Pseudo', // TODO INTL
+          labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
+          errorText: _pseudoNameErrorText,
+          contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
         ),
-        hintText: 'Pseudo', //TODO INTL
-        labelText: 'Pseudo', // TODO INTL
-        labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
-        errorText: _pseudoNameErrorText,
-        contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        onChanged: (String pseudo) {
+          setState(() {
+            _pseudoNameError = false;
+            _pseudoNameErrorText = null;
+          });
+        },
+        onFieldSubmitted: (value) {
+          if (!_pseudoNameError) {
+            FocusScope.of(context).requestFocus(_pseudoFocusNode);
+          }
+        },
       ),
-      onChanged: (String pseudo) {
-        setState(() {
-          _pseudoNameError = false;
-          _pseudoNameErrorText = null;
-        });
-      },
-      onFieldSubmitted: (value) {
-        if (!_pseudoNameError) {
-          FocusScope.of(context).requestFocus(_pseudoFocusNode);
-        }
-      },
     );
   }
 
-  TextFormField password(BuildContext context) {
-    return TextFormField(
-      key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_PASSWORD),
-      focusNode: _passwordFocusNode,
-      obscureText: _passwordObscur,
-      controller: _password,
-      validator: (value) {
-        setState(() {
-          if (value == null || value.isEmpty) {
-            _passwordNameError = true;
-            _passwordNameErrorText = 'Password must be at least 6 characters.';
+  Widget password(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          maxHeight: AppDimensions.minAndMaxHeightTextFormFieldNoShiftDownOnError,
+          minHeight: AppDimensions.minAndMaxHeightTextFormFieldNoShiftDownOnError),
+      child: TextFormField(
+        key: Key(KeysName.LOGIN_REGISTER_SCREEN_TEXTFORMFIELD_PASSWORD),
+        focusNode: _passwordFocusNode,
+        obscureText: _passwordObscur,
+        controller: _password,
+        validator: (value) {
+          setState(() {
+            if (value == null || value.isEmpty) {
+              _passwordNameError = true;
+              _passwordNameErrorText = 'Password must be at least 6 characters.';
+            }
+            RegExp regex = new RegExp(FormValidators.PASSWORD_PATTERN);
+            if (value != null && !regex.hasMatch(value)) {
+              _passwordNameError = true;
+              _passwordNameErrorText = 'Password must be at least 6 characters.';
+            }
+          });
+          return null;
+        },
+        onChanged: (String password) {
+          setState(() {
+            _showPasswordEyeIcon = true;
+            _passwordNameError = false;
+            _passwordNameErrorText = null;
+          });
+        },
+        onFieldSubmitted: (value) {
+          if (!_passwordNameError) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
           }
-          RegExp regex = new RegExp(FormValidators.PASSWORD_PATTERN);
-          if (value != null && !regex.hasMatch(value)) {
-            _passwordNameError = true;
-            _passwordNameErrorText = 'Password must be at least 6 characters.';
-          }
-        });
-        return null;
-      },
-      onChanged: (String password) {
-        setState(() {
-          _showPasswordEyeIcon = true;
-          _passwordNameError = false;
-          _passwordNameErrorText = null;
-        });
-      },
-      onFieldSubmitted: (value) {
-        if (!_passwordNameError) {
-          FocusScope.of(context).requestFocus(_passwordFocusNode);
-        }
-      },
-      decoration: InputDecoration(
-        labelText: 'Password', // TODO INTL
-        labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
-        errorText: _passwordNameErrorText,
-        prefixIcon: Icon(
-          Icons.lock,
-          color: Colors.grey,
+        },
+        decoration: InputDecoration(
+          labelText: 'Password', // TODO INTL
+          labelStyle: TextStyle(fontSize: AppDimensions.xSmallTextSize),
+          errorText: _passwordNameErrorText,
+          prefixIcon: Icon(
+            Icons.lock,
+            color: Colors.grey,
+          ),
+          suffixIcon: _showPasswordEyeIcon
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _passwordObscur = !_passwordObscur;
+                    });
+                  },
+                  icon: Icon(Icons.remove_red_eye_outlined))
+              : SizedBox(),
+          hintText: 'Password', //TODO INTL
+          contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimensions.mediumHeight)),
         ),
-        suffixIcon: _showPasswordEyeIcon
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    _passwordObscur = !_passwordObscur;
-                  });
-                },
-                icon: Icon(Icons.remove_red_eye_outlined))
-            : SizedBox(),
-        hintText: 'Password', //TODO INTL
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimensions.mediumHeight)),
       ),
     );
   }
@@ -385,8 +406,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
         key: _formKey,
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
-            child: Center(
-                child: ConstrainedBox(
+            child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
               child: SingleChildScrollView(
                 child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -399,8 +419,8 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                             yield welcomeMessage();
                             yield sizedBoxMedium();
                             yield email();
-                            yield sizedBoxSmall();
                             if (doIShowEmailValidationButton(formState)) {
+                              yield sizedBoxXSmall();
                               yield buttonValidateEmail(context: context);
                             }
                             if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
@@ -409,11 +429,11 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                             }
                             if (formState is EmailDoesNotExist) {
                               yield pseudo();
-                              yield sizedBoxMedium();
+                              yield sizedBoxXSmall();
                             }
                             if (formState is EmailDoesNotExist || formState is EmailAlreadyExist) {
                               yield password(context);
-                              yield sizedBoxMedium();
+                              yield sizedBoxSmall();
                               yield buttonValidateEmailPseudoPassword(context: context);
                             }
                           }),
@@ -423,7 +443,7 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
                   },
                 ),
               ),
-            ))),
+            )),
       ),
     );
   }

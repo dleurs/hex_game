@@ -27,7 +27,7 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
     final String playerQuery =
         context.currentBeamLocation.state.queryParameters[PlayersScreen.queryParameterPlayer] ?? '';
 
-    return ListView(children: <Widget>[
+    return Column(children: <Widget>[
       SizedBox(
         height: AppDimensions.smallHeight,
       ),
@@ -41,25 +41,24 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
       SizedBox(
         height: AppDimensions.smallHeight,
       ),
-      StreamBuilder<List<Player>>(
-          stream: AuthenticationApiProvider().getSteamPlayersWithPseudo(),
-          initialData: [],
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData || (snapshot.hasData && snapshot.data.isEmpty)) {
-              return Center(
-                child: SizedBox(
-                  child: CircularProgressIndicator(),
-                  width: 60,
-                  height: 60,
-                ),
-              );
-            }
-            List<Player> listPlayer = snapshot.data;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
-              child: Center(
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.6,
+      Expanded(
+        child: StreamBuilder<List<Player>>(
+            stream: AuthenticationApiProvider().getSteamPlayersWithPseudo(),
+            initialData: [],
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData || (snapshot.hasData && snapshot.data.isEmpty)) {
+                return Center(
+                  child: SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
+                  ),
+                );
+              }
+              List<Player> listPlayer = snapshot.data;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xSmallHeight),
+                child: Center(
                   child: ListView.builder(
                     //shrinkWrap: true,
                     itemCount: listPlayer.length,
@@ -108,9 +107,9 @@ class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
                         .toList(), */
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+      ),
     ]);
   }
 }
