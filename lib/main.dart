@@ -8,10 +8,7 @@ import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/navigation/beam_locations.dart';
 import 'package:hex_game/navigation/bottom_nav_bar.dart';
-import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
-import 'package:hex_game/ui/screens/player_screen.dart';
-import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'bloc/form_login_register/form_login_register_bloc.dart';
@@ -38,47 +35,48 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
-          BlocProvider<FormLoginRegisterBloc>(create: (context) => FormLoginRegisterBloc(AuthenticationApiProvider())),
-        ],
-        child: MaterialApp.router(
-          title: "Hex Game",
-          routerDelegate: BeamerRouterDelegate(
-            notFoundPage: BeamPage(
-              key: UniqueKey(),
-              child: PageNotFoundScreen(),
-            ),
-            initialPath: '/home',
-            locationBuilder: SimpleLocationBuilder(
-              routes: {
-                '/*': (context) => Scaffold(
-                    body: Beamer(
-                      key: _beamerKey,
-                      routerDelegate: BeamerRouterDelegate(
-                        locationBuilder: BeamerLocationBuilder(
-                          beamLocations: beamLocations,
-                        ),
+      providers: [
+        BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
+        BlocProvider<FormLoginRegisterBloc>(create: (context) => FormLoginRegisterBloc(AuthenticationApiProvider())),
+      ],
+      child: MaterialApp.router(
+        title: "Hex Game",
+        routerDelegate: BeamerRouterDelegate(
+          notFoundPage: BeamPage(
+            key: UniqueKey(),
+            child: PageNotFoundScreen(),
+          ),
+          initialPath: '/home',
+          locationBuilder: SimpleLocationBuilder(
+            routes: {
+              '/*': (context) => Scaffold(
+                  body: Beamer(
+                    key: _beamerKey,
+                    routerDelegate: BeamerRouterDelegate(
+                      locationBuilder: BeamerLocationBuilder(
+                        beamLocations: beamLocations,
                       ),
                     ),
-                    bottomNavigationBar: BottomNavigationBarWidget(
-                      beamerKey: _beamerKey,
-                    ))
-              },
-            ),
+                  ),
+                  bottomNavigationBar: BottomNavigationBarWidget(
+                    beamerKey: _beamerKey,
+                  ))
+            },
           ),
-          routeInformationParser: BeamerRouteInformationParser(),
-          localizationsDelegates: [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          debugShowCheckedModeBanner: false,
-        ));
+        ),
+        routeInformationParser: BeamerRouteInformationParser(),
+        localizationsDelegates: [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+      ),
+    );
   }
 }

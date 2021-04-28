@@ -5,7 +5,6 @@ import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
-import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';

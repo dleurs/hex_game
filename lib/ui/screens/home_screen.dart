@@ -54,7 +54,6 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: AppDimensions.smallScreenSize),
                 child: ListView.builder(
-                  shrinkWrap: true,
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     return ListTile(

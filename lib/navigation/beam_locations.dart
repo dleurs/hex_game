@@ -5,7 +5,6 @@ import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
-import 'package:hex_game/utils/helpers.dart';
 
 class HomeLocation extends BeamLocation {
   HomeLocation(BeamState state) : super(state);
@@ -56,6 +55,16 @@ class AppBarLocation extends BeamLocation {
         PlayerScreen.beamLocation(playerPseudo: state.pathParameters[PlayerScreen.PLAYER_PSEUDO]),
     ];
   }
+
+  static Widget? buildLeadingFirstLayer(BuildContext context) => BackButton(
+        onPressed: () {
+          if (Beamer.of(context).canPopBeamLocation) {
+            Beamer.of(context).popBeamLocation();
+          } else {
+            Beamer.of(context).beamToNamed(HomeScreen.uri.path);
+          }
+        },
+      );
 }
 
 List<BeamLocation<BeamState>> beamLocations = [

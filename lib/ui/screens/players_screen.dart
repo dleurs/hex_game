@@ -2,11 +2,11 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/models/player.dart';
+import 'package:hex_game/navigation/beam_locations.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
 import 'package:hex_game/ui/screens/player_screen.dart';
 import 'package:hex_game/utils/keys_name.dart';
-import 'package:provider/provider.dart';
 
 class PlayersScreen extends StatefulWidget {
   static final BeamPage beamLocation = BeamPage(
@@ -24,11 +24,7 @@ class PlayersScreen extends StatefulWidget {
 class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
   @override
   Widget? buildLeading(BuildContext context) {
-    return BackButton(
-      onPressed: () {
-        Beamer.of(context).beamBack();
-      },
-    );
+    return AppBarLocation.buildLeadingFirstLayer(context);
   }
 
   @override
