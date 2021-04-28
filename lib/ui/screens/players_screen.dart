@@ -23,6 +23,15 @@ class PlayersScreen extends StatefulWidget {
 
 class _PlayersScreenState extends BaseScreenState<PlayersScreen> {
   @override
+  Widget? buildLeading(BuildContext context) {
+    return BackButton(
+      onPressed: () {
+        Beamer.of(context).beamBack();
+      },
+    );
+  }
+
+  @override
   Widget buildScreen(BuildContext context) {
     final String playerQuery =
         context.currentBeamLocation.state.queryParameters[PlayersScreen.queryParameterPlayer] ?? '';

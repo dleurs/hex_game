@@ -454,6 +454,15 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
   }
 
   @override
+  Widget? buildLeading(BuildContext context) {
+    return BackButton(
+      onPressed: () {
+        Beamer.of(context).beamBack();
+      },
+    );
+  }
+
+  @override
   Widget buildScreen(BuildContext context) {
     return formLoginRegisterPlayer();
   }

@@ -43,7 +43,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
     if (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo) {
       return BackButton(
         onPressed: () {
-          Beamer.of(context).beamToNamed(HomeScreen.uri.path);
+          Beamer.of(context).beamBack();
         },
       );
     } else {
