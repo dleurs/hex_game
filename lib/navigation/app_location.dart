@@ -8,6 +8,7 @@ import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/helpers.dart';
 
 class AppLocation extends BeamLocation {
+  AppLocation(BeamState state) : super(state);
   @override
   List<String> get pathBlueprints => [
         PlayerScreen.uri().path,
@@ -27,6 +28,7 @@ class AppLocation extends BeamLocation {
 }
 
 class GameLocation extends BeamLocation {
+  GameLocation(BeamState state) : super(state);
   @override
   List<String> get pathBlueprints => [
         GameRoomScreen.uri.path,
@@ -40,4 +42,7 @@ class GameLocation extends BeamLocation {
   }
 }
 
-List<BeamLocation<BeamState>> beamLocations = [AppLocation(), GameLocation()];
+List<BeamLocation<BeamState>> beamLocations = [
+  AppLocation(BeamState.fromUri(HomeScreen.uri)),
+  GameLocation(BeamState.fromUri(GameRoomScreen.uri))
+];
