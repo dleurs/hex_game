@@ -23,15 +23,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final _beamerKey = GlobalKey<BeamerState>();
 
-  /*final routerDelegate = BeamerRouterDelegate(
-     notFoundPage: BeamPage(
-      key: UniqueKey(),
-      child: PageNotFoundScreen(),
-    ), 
-     beamLocations: [
-      AppLocation(),
-    ], */
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
