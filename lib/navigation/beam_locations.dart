@@ -42,7 +42,7 @@ class GameLocation extends BeamLocation {
 }
 
 class AppBarLocation extends BeamLocation {
-  AppBarLocation({required this.beamState});
+  AppBarLocation(this.beamState);
 
   final BeamState beamState;
 

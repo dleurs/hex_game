@@ -35,6 +35,9 @@ class _AppScreenState extends State<AppScreen> {
     BeamerRouterDelegate(
       locationBuilder: (state) => GameLocation(state),
     ),
+    BeamerRouterDelegate(
+      locationBuilder: (state) => AppBarLocation(state),
+    ),
   ];
 
   late int _currentIndex;
@@ -53,6 +56,7 @@ class _AppScreenState extends State<AppScreen> {
         children: [
           Beamer(routerDelegate: _routerDelegates[0]),
           Beamer(routerDelegate: _routerDelegates[1]),
+          Beamer(routerDelegate: _routerDelegates[2]),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -60,6 +64,7 @@ class _AppScreenState extends State<AppScreen> {
         items: [
           BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
           BottomNavigationBarItem(label: 'Game', icon: Icon(FlutterIconCom.nut)),
+          //BottomNavigationBarItem(label: 'Player', icon: Icon(FlutterIconCom.nut)),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
