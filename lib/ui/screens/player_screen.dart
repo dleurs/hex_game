@@ -5,7 +5,6 @@ import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
-import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
@@ -43,7 +42,7 @@ class _PlayerScreenState extends BaseScreenState<PlayerScreen> {
     if (authBloc.isLoggedIn && widget.playerPseudo != null && widget.playerPseudo! == authBloc.pseudo) {
       return BackButton(
         onPressed: () {
-          Beamer.of(context).beamToNamed(HomeScreen.uri.path);
+          Beamer.of(context).beamBack();
         },
       );
     } else {

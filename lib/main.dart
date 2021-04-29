@@ -6,7 +6,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hex_game/bloc/authentication/authentication_bloc.dart';
 import 'package:hex_game/core/authentication/authentication_api_manager.dart';
 import 'package:hex_game/generated/l10n.dart';
-import 'package:hex_game/navigation/hex_location.dart';
+import 'package:hex_game/navigation/beam_locations.dart';
+import 'package:hex_game/navigation/bottom_nav_bar.dart';
 import 'package:hex_game/ui/screens/page_not_found_screen.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -20,38 +21,53 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
-    notFoundPage: BeamPage(
-      key: UniqueKey(),
-      child: PageNotFoundScreen(),
-    ),
-    beamLocations: [
-      AppLocation(),
-    ],
-  );
+  final _beamerKey = GlobalKey<BeamerState>();
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
-          BlocProvider<FormLoginRegisterBloc>(create: (context) => FormLoginRegisterBloc(AuthenticationApiProvider())),
-        ],
-        child: MaterialApp.router(
-          title: "Hex Game",
-          routerDelegate: routerDelegate,
-          routeInformationParser: BeamerRouteInformationParser(),
-          localizationsDelegates: [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
+      providers: [
+        BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationApiProvider())),
+        BlocProvider<FormLoginRegisterBloc>(create: (context) => FormLoginRegisterBloc(AuthenticationApiProvider())),
+      ],
+      child: MaterialApp.router(
+        title: "Hex Game",
+        routerDelegate: BeamerRouterDelegate(
+          notFoundPage: BeamPage(
+            key: UniqueKey(),
+            child: PageNotFoundScreen(),
           ),
-          debugShowCheckedModeBanner: false,
-        ));
+          initialPath: '/home',
+          locationBuilder: SimpleLocationBuilder(
+            routes: {
+              '/*': (context) => Scaffold(
+                  body: Beamer(
+                    key: _beamerKey,
+                    routerDelegate: BeamerRouterDelegate(
+                      locationBuilder: BeamerLocationBuilder(
+                        beamLocations: beamLocations,
+                      ),
+                    ),
+                  ),
+                  bottomNavigationBar: BottomNavigationBarWidget(
+                    beamerKey: _beamerKey,
+                  ))
+            },
+          ),
+        ),
+        routeInformationParser: BeamerRouteInformationParser(),
+        localizationsDelegates: [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+      ),
+    );
   }
 }
