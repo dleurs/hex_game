@@ -33,10 +33,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: "Hex Game",
         routerDelegate: BeamerRouterDelegate(
-          notFoundPage: BeamPage(
+/*           notFoundPage: BeamPage(
             key: UniqueKey(),
             child: PageNotFoundScreen(),
-          ),
+          ), */
           initialPath: '/home',
           locationBuilder: SimpleLocationBuilder(
             routes: {

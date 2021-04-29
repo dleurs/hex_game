@@ -47,7 +47,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
   Future<bool> userAlreadyOpenApp() async {
     await _storageManager.open();
-    String USER_ALREADY_OPEN_APP = 'userAlreadyOpenApp';
+    const String USER_ALREADY_OPEN_APP = 'userAlreadyOpenApp';
     bool _userAlreadyOpenApp = (_storageManager.getBoolean(USER_ALREADY_OPEN_APP) ?? false);
     if (!_userAlreadyOpenApp) {
       print("User open the app for the first time");
@@ -212,7 +212,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         throw FireUserNotLogged();
       }
       try {
-        await _provider.deletePlayer(uid: fireUser.uid); // TODO Not working properly
+        await _provider.deletePlayer(uid: fireUser.uid);
         await fireUser.delete();
         await _provider.logout();
         doLogout();

@@ -30,7 +30,8 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Column(
+        Expanded(
+          child: Column(
           children: [
             SizedBox(
               height: AppDimensions.mediumHeight,
@@ -64,7 +65,7 @@ class _HomeScreenState extends BaseScreenState<HomeScreen> {
               ),
             ),
           ],
-        ),
+        ),),
       ],
     );
   }
