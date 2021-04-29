@@ -94,7 +94,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
           //backgroundColor: this.backgroundColor,
           appBar: this.buildAppBar(context),
           body: (authState is InitialAuthenticationState) ? syncUserFirebaseAuth(context) : this.buildScreen(context),
-          bottomNavigationBar: this.buildBottomNavigationBar(context),
           floatingActionButton: this.buildFloatingActionButton(context),
         );
       },
@@ -124,15 +123,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
           style: TextStyle(color: Colors.white, fontSize: Theme.of(context).textTheme.headline6!.fontSize),
         ),
       ),
-      leading: buildLeading(context),
       actions: [
-        IconButton(
-          icon: Icon(FlutterIconCom.group),
-          key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYERS),
-          onPressed: () {
-            Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
-          },
-        ),
         IconButton(
           icon: Icon(FlutterIconCom.user),
           key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYER),
@@ -153,9 +144,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
   /// Implement this to build a [BottomNavigationBar] for all screens
   /// Override this method in each screen that needs a specific one
   ///
-  Widget? buildBottomNavigationBar(BuildContext context) {
-    return null;
-  }
 
   ///
   /// Implement this to build a [FloatingActionButton] for all screens

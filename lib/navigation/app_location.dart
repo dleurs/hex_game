@@ -55,90 +55,45 @@ class _AppScreenState extends State<AppScreen> {
   @override
   void initState() {
     super.initState();
+    _currentIndex = 0;
     if (widget.beamState.uri.path.contains('home')) {
       _currentIndex = 0;
     } else if (widget.beamState.uri.path.contains('game')) {
       _currentIndex = 1;
-    } else {
+    } else if (widget.beamState.uri.path.contains('players')) {
       _currentIndex = 2;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthenticationBloc authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: TextButton(
-          key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_HOME),
-          onPressed: () {
-            Beamer.of(context).beamToNamed(HomeScreen.uri.path);
-          },
-          child: Text(
-            S.of(context).hex_game_title,
-            style: TextStyle(color: Colors.white, fontSize: Theme.of(context).textTheme.headline6!.fontSize),
-          ),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            Beamer(routerDelegate: _routerDelegates[0]),
+            Beamer(routerDelegate: _routerDelegates[1]),
+            Beamer(routerDelegate: _routerDelegates[2]),
+          ],
         ),
-        //leading: buildLeading(context),
-        actions: [
-          IconButton(
-            icon: Icon(FlutterIconCom.group),
-            key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYERS),
-            onPressed: () {
-              var index = 2;
-              setState(() => _currentIndex = index);
-              _routerDelegates[index].parent?.updateRouteInformation(
-                    _routerDelegates[index].currentLocation.state.uri,
-                  );
-              Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
-
-              //Beamer.of(context).beamToNamed(PlayersScreen.uri.path);
-            },
-          ),
-          IconButton(
-            icon: Icon(FlutterIconCom.user),
-            key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYER),
-            onPressed: () {
-              if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
-                Beamer.of(context).beamToNamed(PlayerScreen.uri(playerPseudo: authBloc.pseudo).path);
-              } else {
-                BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailResetEvent());
-                Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
-              }
-            },
-          )
-        ],
-      ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          Beamer(routerDelegate: _routerDelegates[0]),
-          Beamer(routerDelegate: _routerDelegates[1]),
-          Beamer(routerDelegate: _routerDelegates[2]),
-        ],
-      ),
-      bottomNavigationBar: (_currentIndex <= 1)
-          ? BottomNavigationBar(
-              currentIndex: _currentIndex,
-              items: [
-                BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
-                BottomNavigationBarItem(label: 'Game', icon: Icon(FlutterIconCom.nut)),
-                //BottomNavigationBarItem(label: 'Player', icon: Icon(FlutterIconCom.nut)),
-              ],
-              onTap: (index) {
-                setState(() => _currentIndex = index);
-                _routerDelegates[_currentIndex].parent?.updateRouteInformation(
-                      _routerDelegates[_currentIndex].currentLocation.state.uri,
-                    );
-                _routerDelegates[_currentIndex]
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
+            BottomNavigationBarItem(label: 'Game', icon: Icon(FlutterIconCom.nut)),
+            BottomNavigationBarItem(label: 'Player', icon: Icon(FlutterIconCom.group)),
+          ],
+          onTap: (index) {
+            setState(() => _currentIndex = index);
+            _routerDelegates[_currentIndex].parent?.updateRouteInformation(
+                  _routerDelegates[_currentIndex].currentLocation.state.uri,
+                );
 /*                 if (index == 0) {
                   Beamer.of(context).beamToNamed(HomeScreen.uri.path);
                 } else if (index == 1) {
                   Beamer.of(context).beamToNamed(GameRoomScreen.uri.path);
                 } */
-              },
-            )
-          : SizedBox(),
-    );
+          },
+        ));
   }
 }

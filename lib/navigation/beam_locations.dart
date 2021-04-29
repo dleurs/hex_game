@@ -56,11 +56,12 @@ class AppBarLocation extends BeamLocation {
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
     return [
-      if (state.uri.pathSegments.contains(LoginRegisterScreen.uri.pathSegments[0])) //
+      PlayersScreen.beamLocation,
+      if (state.uri.pathSegments.length == 2 && state.uri.pathSegments[1] == LoginRegisterScreen.uri.pathSegments[1]) //
         LoginRegisterScreen.beamLocation,
-      if (state.uri.pathSegments.contains(PlayersScreen.uri.pathSegments[0])) //
-        PlayersScreen.beamLocation,
-      if (state.pathParameters.containsKey(PlayerScreen.PLAYER_PSEUDO))
+      if (state.uri.pathSegments.length >= 2 &&
+          state.uri.pathSegments[1] != LoginRegisterScreen.uri.pathSegments[1] &&
+          state.pathParameters.containsKey(PlayerScreen.PLAYER_PSEUDO))
         PlayerScreen.beamLocation(playerPseudo: state.pathParameters[PlayerScreen.PLAYER_PSEUDO]),
     ];
   }

@@ -9,6 +9,7 @@ import 'package:hex_game/navigation/beam_locations.dart';
 import 'package:hex_game/ui/components/const.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/base_screen.dart';
+import 'package:hex_game/ui/screens/players_screen.dart';
 import 'package:hex_game/utils/form_validator.dart';
 import 'package:hex_game/utils/helpers.dart';
 import 'package:hex_game/utils/keys_name.dart';
@@ -18,7 +19,7 @@ class LoginRegisterScreen extends StatefulWidget {
     key: ValueKey(LoginRegisterScreen.uri.path),
     child: LoginRegisterScreen(),
   );
-  static final Uri uri = Uri(path: "/player");
+  static final Uri uri = Uri(path: PlayersScreen.uri.path + "/player");
 
   @override
   _LoginRegisterScreenState createState() => _LoginRegisterScreenState();
@@ -218,6 +219,11 @@ class _LoginRegisterScreenState extends BaseScreenState<LoginRegisterScreen> {
             if (value != null && value.contains("@")) {
               _pseudoNameError = true;
               _pseudoNameErrorText = 'Pseudo cannot have @ symbol.'; // TODO INTL
+            }
+            if (value != null && value == LoginRegisterScreen.uri.pathSegments[1]) {
+              _pseudoNameError = true;
+              _pseudoNameErrorText =
+                  '\"' + LoginRegisterScreen.uri.pathSegments[1] + '\" cannot be used as a pseudo.'; // TODO INTL
             }
           });
           return null;
