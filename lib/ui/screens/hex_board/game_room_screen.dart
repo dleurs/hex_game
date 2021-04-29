@@ -122,10 +122,6 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
     // the InteractiveViewer parent widget.
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Transformation 2D"), //Text(GalleryLocalizations.of(context).demo2dTransformationsTitle),
-      ),
       body: Container(
         //color: backgroundColor,
         child: LayoutBuilder(
