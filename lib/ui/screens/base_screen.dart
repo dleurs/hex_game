@@ -102,10 +102,6 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
 
   Widget buildScreen(BuildContext context);
 
-  Widget? buildLeading(BuildContext context) {
-    return null;
-  }
-
   ///
   /// Implement this to build an [AppBar] for all screens
   /// Override this method in each screen that needs a specific one
@@ -129,10 +125,16 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
           key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYER),
           onPressed: () {
             if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
-              Beamer.of(context).beamToNamed(PlayerScreen.uri(playerPseudo: authBloc.pseudo).path);
+              Beamer.of(context).currentLocation.update((state) => state.copyWith(
+                    pathBlueprintSegments: [PlayersScreen.uri.pathSegments[0], ':' + PlayerScreen.PLAYER_PSEUDO],
+                    pathParameters: {PlayerScreen.PLAYER_PSEUDO: authBloc.pseudo!},
+                  ));
             } else {
+              Beamer.of(context).currentLocation.update((state) => state.copyWith(
+                    pathBlueprintSegments: LoginRegisterScreen.uri.pathSegments,
+                  ));
               BlocProvider.of<FormLoginRegisterBloc>(context).add(CheckEmailResetEvent());
-              Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
+              //Beamer.of(context).beamToNamed(LoginRegisterScreen.uri.path);
             }
           },
         )
