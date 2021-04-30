@@ -29,7 +29,8 @@ class AppLocation extends BeamLocation {
 }
 
 class AppScreen extends StatefulWidget {
-  AppScreen(this.beamState);
+  static final GlobalKey<_AppScreenState> globalKey = GlobalKey();
+  AppScreen(this.beamState) : super(key: globalKey);
 
   final BeamState beamState;
 
@@ -52,15 +53,22 @@ class _AppScreenState extends State<AppScreen> {
 
   late int _currentIndex;
 
+  void moveTab(int index) {
+    setState(() => _currentIndex = index);
+    _routerDelegates[index].parent?.updateRouteInformation(
+          _routerDelegates[_currentIndex].currentLocation.state.uri,
+        );
+  }
+
   @override
   void initState() {
     super.initState();
     _currentIndex = 0;
-    if (widget.beamState.uri.path.contains('home')) {
+    if (widget.beamState.uri.path.contains(HomeScreen.uri.pathSegments[0])) {
       _currentIndex = 0;
-    } else if (widget.beamState.uri.path.contains('game')) {
+    } else if (widget.beamState.uri.path.contains(GameRoomScreen.uri.pathSegments[0])) {
       _currentIndex = 1;
-    } else if (widget.beamState.uri.path.contains('players')) {
+    } else if (widget.beamState.uri.path.contains(PlayersScreen.uri.pathSegments[0])) {
       _currentIndex = 2;
     }
   }
@@ -84,15 +92,7 @@ class _AppScreenState extends State<AppScreen> {
             BottomNavigationBarItem(label: 'Player', icon: Icon(FlutterIconCom.group)),
           ],
           onTap: (index) {
-            setState(() => _currentIndex = index);
-            _routerDelegates[_currentIndex].parent?.updateRouteInformation(
-                  _routerDelegates[_currentIndex].currentLocation.state.uri,
-                );
-/*                 if (index == 0) {
-                  Beamer.of(context).beamToNamed(HomeScreen.uri.path);
-                } else if (index == 1) {
-                  Beamer.of(context).beamToNamed(GameRoomScreen.uri.path);
-                } */
+            moveTab(index);
           },
         ));
   }

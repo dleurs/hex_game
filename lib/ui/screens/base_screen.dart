@@ -6,6 +6,7 @@ import 'package:hex_game/bloc/authentication/authentication_state.dart';
 import 'package:hex_game/bloc/authentication/bloc.dart';
 import 'package:hex_game/bloc/form_login_register/form_login_register_bloc.dart';
 import 'package:hex_game/generated/l10n.dart';
+import 'package:hex_game/navigation/app_location.dart';
 import 'package:hex_game/ui/components/flutter_icon_com_icons.dart';
 import 'package:hex_game/ui/screens/home_screen.dart';
 import 'package:hex_game/ui/screens/login_register_screen.dart';
@@ -112,7 +113,8 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
       title: TextButton(
         key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_HOME),
         onPressed: () {
-          Beamer.of(context).beamToNamed(HomeScreen.uri.path);
+          AppScreen.globalKey.currentState?.moveTab(0);
+          //Beamer.of(context).beamToNamed(HomeScreen.uri.path);
         },
         child: Text(
           S.of(context).hex_game_title,
@@ -124,6 +126,7 @@ abstract class BaseScreenState<T extends StatefulWidget> extends State<T> {
           icon: Icon(FlutterIconCom.user),
           key: Key(KeysName.BASE_SCREEN_BUTTON_GOTO_PLAYER),
           onPressed: () {
+            AppScreen.globalKey.currentState?.moveTab(2);
             if (authBloc.isLoggedIn && (authBloc.pseudo?.isNotEmpty ?? false)) {
               Beamer.of(context).currentLocation.update((state) => state.copyWith(
                     pathBlueprintSegments: [PlayersScreen.uri.pathSegments[0], ':' + PlayerScreen.PLAYER_PSEUDO],
